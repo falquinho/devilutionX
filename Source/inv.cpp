@@ -395,6 +395,7 @@ void DrawInvBelt()
 			continue;
 		}
 
+		// InvRect are the rects of the slots locations. Belt rects are the last 8
 		InvDrawSlotBack(InvRect[i + 65].X + 64, InvRect[i + 65].Y + 159, 28, 28);
 		frame = plr[myplr].SpdList[i]._iCurs + CURSOR_FIRSTITEM;
 		frame_width = InvItemWidth[frame];

@@ -213,6 +213,8 @@ set(devilutionx_SRCS
   SourceX/miniwin/rand.cpp
   SourceX/miniwin/thread.cpp
   SourceX/miniwin/dsound.cpp
+  SourceX/modern_interface/modern_control_panel.cpp
+  SourceX/modern_interface/utils.cpp
   SourceX/sound.cpp
   SourceX/storm/storm.cpp
   SourceX/storm/storm_net.cpp
