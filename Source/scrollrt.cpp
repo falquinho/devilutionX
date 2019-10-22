@@ -1,4 +1,5 @@
 #include "diablo.h"
+#include "../SourceX/modern_interface/modern_control_panel.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -2395,25 +2396,29 @@ void DrawAndBlit()
 	} else {
 		T_DrawView(ViewX, ViewY);
 	}
-	if (ctrlPan) {
-		ClearCtrlPan();
-	}
-	if (drawhpflag) {
-		UpdateLifeFlask();
-	}
-	if (drawmanaflag) {
-		UpdateManaFlask();
-	}
-	if (drawbtnflag) {
-		DrawCtrlPan();
-	}
-	if (drawsbarflag) {
-		DrawInvBelt();
-	}
-	if (talkflag) {
-		DrawTalkPan();
-		hgt = SCREEN_HEIGHT;
-	}
+	// if (ctrlPan) {
+	// 	ClearCtrlPan();
+	// }
+	// if (drawhpflag) {
+	// 	UpdateLifeFlask();
+	// }
+	// if (drawmanaflag) {
+	// 	UpdateManaFlask();
+	// }
+	// if (drawbtnflag) {
+	// 	DrawCtrlPan();
+	// }
+	// if (drawsbarflag) {
+	// 	DrawInvBelt();
+	// }
+	// if (talkflag) {
+	// 	DrawTalkPan();
+	// 	hgt = SCREEN_HEIGHT;
+	// }
+
+	load_modern_control_panel();
+	draw_modern_control_panel();
+
 	scrollrt_draw_cursor_item();
 	unlock_buf(0);
 
