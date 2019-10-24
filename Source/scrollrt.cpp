@@ -848,9 +848,9 @@ void DrawView(int StartX, int StartY)
 	DrawPlrMsg();
 	gmenu_draw();
 	doom_draw();
-	DrawInfoBox();
-	DrawLifeFlask();
-	DrawManaFlask();
+	// DrawInfoBox();
+	// DrawLifeFlask();
+	// DrawManaFlask();
 }
 
 void ClearScreenBuffer()
