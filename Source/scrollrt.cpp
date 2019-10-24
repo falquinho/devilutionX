@@ -1099,25 +1099,28 @@ void DrawAndBlit()
 
 	lock_buf(0);
 	DrawView(ViewX, ViewY);
-	if (ctrlPan) {
-		ClearCtrlPan();
-	}
-	if (drawhpflag) {
-		UpdateLifeFlask();
-	}
-	if (drawmanaflag) {
-		UpdateManaFlask();
-	}
-	if (drawbtnflag) {
-		DrawCtrlPan();
-	}
-	if (drawsbarflag) {
-		DrawInvBelt();
-	}
-	if (talkflag) {
-		DrawTalkPan();
-		hgt = SCREEN_HEIGHT;
-	}
+	// if (ctrlPan) {
+	// 	ClearCtrlPan();
+	// }
+	// if (drawhpflag) {
+	// 	UpdateLifeFlask();
+	// }
+	// if (drawmanaflag) {
+	// 	UpdateManaFlask();
+	// }
+	// if (drawbtnflag) {
+	// 	DrawCtrlPan();
+	// }
+	// if (drawsbarflag) {
+	// 	DrawInvBelt();
+	// }
+	// if (talkflag) {
+	// 	DrawTalkPan();
+	// 	hgt = SCREEN_HEIGHT;
+	// }
+
+	draw_modern_control_panel();
+
 	scrollrt_draw_cursor_item();
 	unlock_buf(0);
 

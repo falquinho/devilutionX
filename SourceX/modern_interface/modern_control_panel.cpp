@@ -50,9 +50,9 @@ void draw_item_belt()
 		int frame = plr[myplr].SpdList[i]._iCurs + CURSOR_FIRSTITEM;
 
 		if (plr[myplr].SpdList[i]._iStatFlag)
-			CelDrawHdrOnly(left + (hor_space * i), bottom, pCursCels, frame, frame_width, 0, 8);
+			CelClippedDraw(left + (hor_space * i), bottom, pCursCels, frame, frame_width);
 		else
-			CelDrawHdrLightRed(left + (hor_space * i), bottom, pCursCels, frame, frame_width, 0, 8, 1);
+			CelDrawLightRed(left + (hor_space * i), bottom, pCursCels, frame, frame_width, 0, 8, 1);
 		
 		char str[] = {i+49,'\0'};
 		DrawString(left - SCREEN_X + 20 + (i*hor_space), bottom - SCREEN_Y - 12, str);
@@ -61,7 +61,7 @@ void draw_item_belt()
 
 void draw_modern_control_panel()
 {
-	CelDecodeOnly( panel_left, panel_bottom, ctrl_panel_cel, 1, panel_width);
+	CelDraw( panel_left, panel_bottom, ctrl_panel_cel, 1, panel_width);
 	update_life();
 	update_mana();
 	draw_item_belt();

@@ -10,7 +10,7 @@ void SetPixel(int sx, int sy, BYTE col)
 
 	BYTE *dst;
 
-	dst = &gpBuffer[sx + PitchTbl[sy]];
+	dst = &gpBuffer[sx + BUFFER_WIDTH * sy];
 
 	*dst = col;
 }
@@ -44,7 +44,7 @@ void DrawString(int x, int y, char* str)
 		int left = SCREEN_X + x + (curr_col * char_w);
 		int bottom = SCREEN_Y + y + line_h;
 		int cel_index = fontframe[gbFontTransTbl[str[i]]];
-		CelDecodeOnly(left, bottom, pPanelText, cel_index, char_w);
+		CelDraw(left, bottom, pPanelText, cel_index, char_w);
 	}
 }
 

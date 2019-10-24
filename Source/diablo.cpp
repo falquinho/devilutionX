@@ -1,6 +1,7 @@
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
+#include "../SourceX/modern_interface/modern_control_panel.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -1623,6 +1624,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 
 	if (firstflag) {
 		InitControlPan();
+		load_modern_control_panel();
 	}
 	IncProgress();
 	if (leveltype != DTYPE_TOWN) {
