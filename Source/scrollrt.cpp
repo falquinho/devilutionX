@@ -853,6 +853,37 @@ void DrawView(int StartX, int StartY)
 	// DrawManaFlask();
 }
 
+int DrawControlPanel(BOOL ctrlPan, int hgt)
+{
+	int new_hgt = hgt;
+
+	if (ctrlPan) {
+		ClearCtrlPan();
+	}
+	if (drawhpflag) {
+		UpdateLifeFlask();
+	}
+	if (drawmanaflag) {
+		UpdateManaFlask();
+	}
+	if (drawbtnflag) {
+		DrawCtrlPan();
+	}
+	if (drawsbarflag) {
+		DrawInvBelt();
+	}
+	if (talkflag) {
+		DrawTalkPan();
+		new_hgt = SCREEN_HEIGHT;
+	}
+
+	DrawInfoBox();
+	DrawLifeFlask();
+	DrawManaFlask();
+
+	return new_hgt;
+}
+
 void ClearScreenBuffer()
 {
 	lock_buf(3);
@@ -1097,29 +1128,14 @@ void DrawAndBlit()
 
 	drawpanflag = 0;
 
+	BOOL modern_ctrl_pan = TRUE;
 	lock_buf(0);
 	DrawView(ViewX, ViewY);
-	// if (ctrlPan) {
-	// 	ClearCtrlPan();
-	// }
-	// if (drawhpflag) {
-	// 	UpdateLifeFlask();
-	// }
-	// if (drawmanaflag) {
-	// 	UpdateManaFlask();
-	// }
-	// if (drawbtnflag) {
-	// 	DrawCtrlPan();
-	// }
-	// if (drawsbarflag) {
-	// 	DrawInvBelt();
-	// }
-	// if (talkflag) {
-	// 	DrawTalkPan();
-	// 	hgt = SCREEN_HEIGHT;
-	// }
 
-	draw_modern_control_panel();
+	if(!modern_ctrl_pan)
+		hgt = DrawControlPanel(ctrlPan, hgt);
+	else
+		draw_modern_control_panel();
 
 	scrollrt_draw_cursor_item();
 	unlock_buf(0);
