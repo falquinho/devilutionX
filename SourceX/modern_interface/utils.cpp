@@ -3,6 +3,10 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
+int char_w = 13;
+int line_h = 12;
+
+
 void SetPixel(int sx, int sy, BYTE col)
 {
 	if (sy < 0 || sy >= SCREEN_HEIGHT + SCREEN_Y || sx < SCREEN_X || sx >= SCREEN_WIDTH + SCREEN_X)
@@ -30,10 +34,15 @@ void DrawRectangle(int left, int bottom, int width, int height, BYTE color, bool
 }
 
 
+void DrawChar(int x, int y, char c)
+{
+	int cel_index = fontframe[gbFontTransTbl[c]];
+	CelDraw(SCREEN_X + x, SCREEN_Y + y + line_h, pPanelText, cel_index, char_w);
+}
+
+
 void DrawString(int x, int y, char* str)
 {
-	int char_w = 13;
-	int line_h = 12;
 	int curr_col  = 0;
 	for(int i = 0; str[i] != '\0'; i++, curr_col++) {
 		if(str[i] == '\n') {
@@ -41,10 +50,8 @@ void DrawString(int x, int y, char* str)
 			curr_col = -1;
 			continue;
 		}
-		int left = SCREEN_X + x + (curr_col * char_w);
-		int bottom = SCREEN_Y + y + line_h;
-		int cel_index = fontframe[gbFontTransTbl[str[i]]];
-		CelDraw(left, bottom, pPanelText, cel_index, char_w);
+		int curr_x = x + (curr_col * char_w);
+		DrawChar(curr_x, y, str[i]);
 	}
 }
 

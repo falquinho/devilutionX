@@ -54,9 +54,20 @@ void draw_item_belt()
 		else
 			CelDrawLightRed(left + (hor_space * i), bottom, pCursCels, frame, frame_width, 0, 8, 1);
 		
-		char str[] = {i+49,'\0'};
-		DrawString(left - SCREEN_X + 20 + (i*hor_space), bottom - SCREEN_Y - 12, str);
+		DrawChar(left - SCREEN_X + 20 + (i*hor_space), bottom - SCREEN_Y - 12, i + 49);
 	}		
+}
+
+char hotkeys[6][4] = {
+	"Q", "W", "E", "R", "LMB", "RMB"
+};
+void draw_spellbar()
+{
+	int x = panel_left + 84 - SCREEN_X;
+	int y = panel_bottom - 8 - SCREEN_Y;
+	for(int i = 0; i < 6; i++, x += 42) {
+		DrawString(x - (i >= 4? 12: 0), y, hotkeys[i]);
+	}
 }
 
 void draw_modern_control_panel()
@@ -65,6 +76,7 @@ void draw_modern_control_panel()
 	update_life();
 	update_mana();
 	draw_item_belt();
+	draw_spellbar();
 }
 
 void unload_modern_control_panel()
