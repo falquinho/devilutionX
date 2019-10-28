@@ -77,6 +77,8 @@ void draw_modern_control_panel()
 	update_mana();
 	draw_item_belt();
 	draw_spellbar();
+
+	DrawTooltip(0, 0, "TESTTESTTESTTEST");
 }
 
 void unload_modern_control_panel()

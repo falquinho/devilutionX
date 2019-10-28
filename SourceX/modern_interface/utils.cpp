@@ -55,4 +55,24 @@ void DrawString(int x, int y, char* str)
 	}
 }
 
+
+void DrawTooltip(int x, int y, char* str)
+{
+	int height = line_h;
+	int width  = 0;
+	int curr_width = 0;
+	for(int i = 0; str[i] != '\0'; i++) {
+		curr_width += char_w;
+		if(str[i] == '\n') {
+			height += line_h;
+			width = width > curr_width? width : curr_width;
+			curr_width = 0;
+		}
+	}
+	width = width > curr_width? width : curr_width;
+
+	DrawRectangle(SCREEN_X + x, SCREEN_Y + y + height, width, height, PAL16_GRAY + 15, true);
+	DrawString(x + 2, y + 2, str);
+}
+
 DEVILUTION_END_NAMESPACE
