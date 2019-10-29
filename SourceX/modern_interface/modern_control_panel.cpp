@@ -1,5 +1,6 @@
 #include "modern_control_panel.h"
 #include "utils.h"
+#include "modern_input_handler.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -70,6 +71,14 @@ void draw_spellbar()
 	}
 }
 
+void draw_tooltip_if_needed()
+{
+	if(btn_hovered >= 6)
+		return;
+
+	DrawTooltip(btns_rects[btn_hovered][0], btns_rects[btn_hovered][1] - 16, btns_tips[btn_hovered]);
+}
+
 void draw_modern_control_panel()
 {
 	CelDraw( panel_left, panel_bottom, ctrl_panel_cel, 1, panel_width);
@@ -77,8 +86,7 @@ void draw_modern_control_panel()
 	update_mana();
 	draw_item_belt();
 	draw_spellbar();
-
-	DrawTooltip(0, 0, "TESTTESTTESTTEST");
+	draw_tooltip_if_needed();
 }
 
 void unload_modern_control_panel()

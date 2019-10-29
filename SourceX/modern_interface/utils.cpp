@@ -71,8 +71,18 @@ void DrawTooltip(int x, int y, char* str)
 	}
 	width = width > curr_width? width : curr_width;
 
-	DrawRectangle(SCREEN_X + x, SCREEN_Y + y + height, width, height, PAL16_GRAY + 15, true);
-	DrawString(x + 2, y + 2, str);
+	DrawRectangle(SCREEN_X + x, SCREEN_Y + y + height + 2, width + 4, height + 4, PAL16_GRAY + 15, true);
+	DrawString(x + 2, y, str);
+}
+
+
+bool CoordInsideRect(int x, int y, int* rect)
+{
+	if(x < rect[0] || x > rect[0] + rect[2])
+		return false;
+	if(y < rect[1] || y > rect[1] + rect[3])
+		return false;
+	return true;
 }
 
 DEVILUTION_END_NAMESPACE

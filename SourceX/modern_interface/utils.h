@@ -10,6 +10,7 @@ void DrawRectangle(int left, int bottom, int width, int height, BYTE color, bool
 void DrawChar(int x, int y, char c);
 void DrawString(int x, int y, char* str);
 void DrawTooltip(int x, int y, char* str);
+bool CoordInsideRect(int x, int y, int* rect);
 
 DEVILUTION_END_NAMESPACE
 
