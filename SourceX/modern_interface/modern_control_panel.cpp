@@ -73,10 +73,8 @@ void draw_spellbar()
 
 void draw_tooltip_if_needed()
 {
-	if(btn_hovered >= 6)
-		return;
-
-	DrawTooltip(btns_rects[btn_hovered][0], btns_rects[btn_hovered][1] - 16, btns_tips[btn_hovered]);
+	if(btn_hovered < 6)
+		DrawTooltip(btns_rects[btn_hovered], btns_tips[btn_hovered]);
 }
 
 void draw_modern_control_panel()

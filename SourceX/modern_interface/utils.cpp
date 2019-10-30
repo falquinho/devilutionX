@@ -30,7 +30,6 @@ void DrawRectangle(int left, int bottom, int width, int height, BYTE color, bool
 				SetPixel(left + x, bottom - y, color);
 		}
 	}
-	
 }
 
 
@@ -56,23 +55,46 @@ void DrawString(int x, int y, char* str)
 }
 
 
-void DrawTooltip(int x, int y, char* str)
+int GetStringRectWidth(char* str)
 {
-	int height = line_h;
 	int width  = 0;
 	int curr_width = 0;
-	for(int i = 0; str[i] != '\0'; i++) {
-		curr_width += char_w;
+	for(int i = 0; str[i] != '\0'; i++, curr_width += char_w) {
 		if(str[i] == '\n') {
-			height += line_h;
 			width = width > curr_width? width : curr_width;
 			curr_width = 0;
 		}
 	}
-	width = width > curr_width? width : curr_width;
+	return width > curr_width? width : curr_width;
+}
 
-	DrawRectangle(SCREEN_X + x, SCREEN_Y + y + height + 2, width + 4, height + 4, PAL16_GRAY + 15, true);
-	DrawString(x + 2, y, str);
+
+int GetStringRectHeight(char* str)
+{
+	int height = line_h;
+	for(int i = 0; str[i] != '\0'; i++) {
+		if(str[i] == '\n') height += line_h;
+	}
+	return height;
+}
+
+
+void DrawTooltip(int* el_rect, char* str)
+{
+	int tt_h = GetStringRectHeight(str) + 4;
+	int tt_w = GetStringRectWidth(str)  + 4;
+
+	int x = (el_rect[0] + el_rect[2]/2) - tt_w/2 < 0? 0 : (el_rect[0] + el_rect[2]/2) - tt_w/2;
+	int y = el_rect[1] - tt_h < 0? 0 : el_rect[1] - tt_h;
+
+	DrawRectangle(SCREEN_X + x, SCREEN_Y + y + tt_h, tt_w, tt_h, PAL16_GRAY + 15, true);
+	DrawString(x + 8, y + 2, str);
+}
+
+
+void DrawTooltipAvoidRect(int* rect, char* str)
+{
+
 }
 
 
