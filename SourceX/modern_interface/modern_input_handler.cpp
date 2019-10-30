@@ -27,7 +27,6 @@ int btns_rects[][4] = {
 };
 
 int btn_hovered = 6;
-
 int btn_pressed = 6;
 
 void check_mouse_over()
@@ -43,10 +42,29 @@ void check_mouse_over()
     btn_hovered = i;
 }
 
-void modern_input_handler()
+
+void on_mouse_lbtn_up()
+{
+    if(btn_pressed == 3) {
+        invflag = invflag? 0 : 1;
+    } else if(btn_pressed == 4) {
+        sbookflag = sbookflag? 0 : 1;
+    }
+
+    btn_pressed = 6;
+}
+
+void modern_input_handler(int event)
 {
     printf("MODERN INPUT HANDLER\n");
+
     check_mouse_over();
+
+    if(event == DVL_WM_LBUTTONDOWN)
+        btn_pressed = btn_hovered;
+
+    else if(event == DVL_WM_LBUTTONUP)
+        on_mouse_lbtn_up();
 }
 
 DEVILUTION_END_NAMESPACE

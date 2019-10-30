@@ -84,6 +84,13 @@ void draw_modern_control_panel()
 	update_mana();
 	draw_item_belt();
 	draw_spellbar();
+
+	if (invflag) {
+		DrawInv();
+	} else if (sbookflag) {
+		DrawSpellBook();
+	}
+	
 	draw_tooltip_if_needed();
 }
 

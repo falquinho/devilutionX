@@ -11,7 +11,7 @@ extern int btn_pressed;
 
 extern int btn_hovered;
 
-void modern_input_handler();
+void modern_input_handler(int event);
 
 DEVILUTION_END_NAMESPACE
 

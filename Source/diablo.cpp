@@ -519,7 +519,7 @@ LRESULT CALLBACK DisableInputWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	modern_input_handler();
+	modern_input_handler(uMsg);
 	
 	switch (uMsg) {
 	case WM_KEYDOWN:
