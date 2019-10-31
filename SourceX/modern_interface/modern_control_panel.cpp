@@ -73,8 +73,20 @@ void draw_spellbar()
 
 void draw_tooltip_if_needed()
 {
-	if(btn_hovered < 6)
-		DrawTooltip(btns_rects[btn_hovered], btns_tips[btn_hovered]);
+	if(hovered_element == PANEL_ELEMENT_NONE)
+		return;
+	if(hovered_element < 6)
+		return DrawTooltip(btns_rects[hovered_element], btns_tips[hovered_element]);
+	if(hovered_element == PANEL_ELEMENT_LIFEBAR) {
+		char tooltip[26];
+		sprintf(tooltip, "%i/%i", plr[myplr]._pHitPoints >> 6, plr[myplr]._pMaxHP >> 6);
+		return DrawTooltip(meters_rects[0], tooltip);
+	}
+	if(hovered_element == PANEL_ELEMENT_MANABAR) {
+		char tooltip[26];
+		sprintf(tooltip, "%i/%i", plr[myplr]._pMana >> 6, plr[myplr]._pMaxMana >> 6);
+		return DrawTooltip(meters_rects[1], tooltip);
+	}
 }
 
 void draw_modern_control_panel()

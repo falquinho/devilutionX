@@ -88,7 +88,7 @@ void DrawTooltip(int* el_rect, char* str)
 	int y = el_rect[1] - tt_h < 0? 0 : el_rect[1] - tt_h;
 
 	DrawRectangle(SCREEN_X + x, SCREEN_Y + y + tt_h, tt_w, tt_h, PAL16_GRAY + 15, true);
-	DrawString(x + 8, y + 2, str);
+	DrawString(x + 4, y + 2, str);
 }
 
 

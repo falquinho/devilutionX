@@ -26,42 +26,64 @@ int btns_rects[][4] = {
     {panel_x + 361, panel_y + 48, 16, 16},
 };
 
-int btn_hovered = 6;
-int btn_pressed = 6;
+int meters_rects[][4] = {
+    {panel_x +  34, panel_y + 14, 23, 51},
+    {panel_x + 329, panel_y + 14, 23, 51}
+};
 
-void check_mouse_over()
+
+int hovered_element = PANEL_ELEMENT_NONE;
+int pressed_element = PANEL_ELEMENT_NONE;
+
+void set_hovered_element()
 {
     int i;
-    for(i = 0; i < 6; i++) {
-        if(CoordInsideRect(MouseX, MouseY, btns_rects[i]))
-            break;
-    }
-    if(btn_hovered != i)
-        btn_pressed = 6;
 
-    btn_hovered = i;
+    for(i = 0; i < 6; i++) {
+        if(CoordInsideRect(MouseX, MouseY, btns_rects[i])) break;
+    }
+    if(i < 6) {
+        hovered_element = i;
+        if(pressed_element != hovered_element) pressed_element = PANEL_ELEMENT_NONE;
+        return;
+    }
+    
+    for(i = 0; i < 2; i++) {
+        if(CoordInsideRect(MouseX, MouseY, meters_rects[i])) break;
+    }
+    if(i < 2) {
+        hovered_element = 6 + i;
+        pressed_element = PANEL_ELEMENT_NONE;
+        return;
+    }
+
+    hovered_element = PANEL_ELEMENT_NONE;
+    pressed_element = PANEL_ELEMENT_NONE;
 }
 
 
 void on_mouse_lbtn_up()
 {
-    if(btn_pressed == 3) {
+    if(pressed_element == PANEL_ELEMENT_NONE)
+        return;
+
+    if(pressed_element == PANEL_ELEMENT_BTN_INV) {
         invflag = invflag? 0 : 1;
-    } else if(btn_pressed == 4) {
+    } else if(pressed_element == PANEL_ELEMENT_BTN_SBK) {
         sbookflag = sbookflag? 0 : 1;
     }
 
-    btn_pressed = 6;
+    pressed_element = PANEL_ELEMENT_NONE;
 }
 
 void modern_input_handler(int event)
 {
     printf("MODERN INPUT HANDLER\n");
 
-    check_mouse_over();
+    set_hovered_element();
 
     if(event == DVL_WM_LBUTTONDOWN)
-        btn_pressed = btn_hovered;
+        pressed_element = hovered_element;
 
     else if(event == DVL_WM_LBUTTONUP)
         on_mouse_lbtn_up();
