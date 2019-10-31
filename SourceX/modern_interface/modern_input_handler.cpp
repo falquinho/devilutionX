@@ -23,7 +23,7 @@ int btns_rects[][4] = {
     {panel_x +   9, panel_y + 48, 16, 16},
     {panel_x + 361, panel_y + 14, 16, 16},
     {panel_x + 361, panel_y + 31, 16, 16},
-    {panel_x + 361, panel_y + 48, 16, 16},
+    {panel_x + 361, panel_y + 48, 16, 16}
 };
 
 int meters_rects[][4] = {
@@ -31,6 +31,7 @@ int meters_rects[][4] = {
     {panel_x + 329, panel_y + 14, 23, 51}
 };
 
+int base_belt_rect[4] = {panel_x + 78, panel_y + 3, 28, 26};
 
 int hovered_element = PANEL_ELEMENT_NONE;
 int pressed_element = PANEL_ELEMENT_NONE;
@@ -57,6 +58,15 @@ void set_hovered_element()
         return;
     }
 
+    for(i = 0; i < 8; i++) {
+        int curr_belt_slot[4] = {base_belt_rect[0] + (base_belt_rect[2] * i), base_belt_rect[1], base_belt_rect[2], base_belt_rect[3]};
+        if(CoordInsideRect(MouseX, MouseY, curr_belt_slot)) {
+            hovered_element = 8 + i;
+            if(pressed_element != hovered_element) pressed_element = PANEL_ELEMENT_NONE;
+            return;
+        }
+    }
+
     hovered_element = PANEL_ELEMENT_NONE;
     pressed_element = PANEL_ELEMENT_NONE;
 }
@@ -69,9 +79,18 @@ void on_mouse_lbtn_up()
 
     if(pressed_element == PANEL_ELEMENT_BTN_INV) {
         invflag = invflag? 0 : 1;
+        sbookflag = 0;
     } else if(pressed_element == PANEL_ELEMENT_BTN_SBK) {
         sbookflag = sbookflag? 0 : 1;
-    }
+        invflag = 0;
+    } else if(pressed_element == PANEL_ELEMENT_BTN_CHR) {
+        chrflag = chrflag? 0 : 1;
+        questlog = 0;
+    } else if(pressed_element == PANEL_ELEMENT_BTN_QST) {
+        questlog = questlog? 0 : 1;
+        chrflag = 0;
+    } else if(pressed_element == PANEL_ELEMENT_BTN_MAP)
+        automapflag = automapflag? 0 : 1;
 
     pressed_element = PANEL_ELEMENT_NONE;
 }

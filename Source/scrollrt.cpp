@@ -801,24 +801,25 @@ static void DrawGame(int x, int y)
 void DrawView(int StartX, int StartY)
 {
 	DrawGame(StartX, StartY);
-	if (automapflag) {
-		DrawAutomap();
-	}
+	// if (automapflag) {
+	// 	DrawAutomap();
+	// }
 	if (stextflag && !qtextflag)
 		DrawSText();
-	if (invflag) {
-		DrawInv();
-	} else if (sbookflag) {
-		DrawSpellBook();
-	}
+	// if (invflag) {
+	// 	DrawInv();
+	// } else if (sbookflag) {
+	// 	DrawSpellBook();
+	// }
 
 	DrawDurIcon();
 
-	if (chrflag) {
-		DrawChr();
-	} else if (questlog) {
-		DrawQuestLog();
-	} else if (plr[myplr]._pStatPts != 0 && !spselflag) {
+	// if (chrflag) {
+	// 	DrawChr();
+	// } else if (questlog) {
+	// 	DrawQuestLog();
+	// } else if (plr[myplr]._pStatPts != 0 && !spselflag) {
+	if (plr[myplr]._pStatPts != 0 && !spselflag) {
 		DrawLevelUpIcon();
 	}
 	if (uitemflag) {

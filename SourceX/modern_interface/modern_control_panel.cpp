@@ -75,8 +75,10 @@ void draw_tooltip_if_needed()
 {
 	if(hovered_element == PANEL_ELEMENT_NONE)
 		return;
+
 	if(hovered_element < 6)
 		return DrawTooltip(btns_rects[hovered_element], btns_tips[hovered_element]);
+		
 	if(hovered_element == PANEL_ELEMENT_LIFEBAR) {
 		char tooltip[26];
 		sprintf(tooltip, "%i/%i", plr[myplr]._pHitPoints >> 6, plr[myplr]._pMaxHP >> 6);
@@ -86,6 +88,10 @@ void draw_tooltip_if_needed()
 		char tooltip[26];
 		sprintf(tooltip, "%i/%i", plr[myplr]._pMana >> 6, plr[myplr]._pMaxMana >> 6);
 		return DrawTooltip(meters_rects[1], tooltip);
+	}
+
+	if(hovered_element >= PANEL_ELEMENT_BELT_1 && hovered_element <= PANEL_ELEMENT_BELT_8) {
+		// get item tooltip somehow
 	}
 }
 
@@ -97,11 +103,18 @@ void draw_modern_control_panel()
 	draw_item_belt();
 	draw_spellbar();
 
-	if (invflag) {
+	if(automapflag)
+		DrawAutomap();
+
+	if (invflag)
 		DrawInv();
-	} else if (sbookflag) {
+	else if (sbookflag)
 		DrawSpellBook();
-	}
+
+	if(chrflag)
+		DrawChr();
+	else if(questlog)
+		DrawQuestLog();
 	
 	draw_tooltip_if_needed();
 }
