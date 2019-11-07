@@ -17,21 +17,30 @@ char* btns_tips[] = {
     "MENU(C)"
 };
 
-int btns_rects[][4] = {
-    {panel_x +   9, panel_y + 14, 16, 16},
-    {panel_x +   9, panel_y + 31, 16, 16},
-    {panel_x +   9, panel_y + 48, 16, 16},
-    {panel_x + 361, panel_y + 14, 16, 16},
-    {panel_x + 361, panel_y + 31, 16, 16},
-    {panel_x + 361, panel_y + 48, 16, 16}
+int panel_elements_rects[][4] = {
+    {panel_x +   9, panel_y + 14, 16, 16}, // character button
+    {panel_x +   9, panel_y + 31, 16, 16}, // quest button 
+    {panel_x +   9, panel_y + 48, 16, 16}, // map button
+    {panel_x + 361, panel_y + 14, 16, 16}, // inventory button
+    {panel_x + 361, panel_y + 31, 16, 16}, // spellbook button
+    {panel_x + 361, panel_y + 48, 16, 16}, // menu button
+    {panel_x +  34, panel_y + 14, 23, 51}, // life meter  
+    {panel_x + 329, panel_y + 14, 23, 51}, // mana meter
+    {panel_x + 78 + (28*0), panel_y + 3, 28, 26}, // belt item 1
+    {panel_x + 78 + (28*1), panel_y + 3, 28, 26}, // belt item 2 
+    {panel_x + 78 + (28*2), panel_y + 3, 28, 26}, // belt item 3 
+    {panel_x + 78 + (28*3), panel_y + 3, 28, 26}, // belt item 4 
+    {panel_x + 78 + (28*4), panel_y + 3, 28, 26}, // belt item 5 
+    {panel_x + 78 + (28*5), panel_y + 3, 28, 26}, // belt item 6 
+    {panel_x + 78 + (28*6), panel_y + 3, 28, 26}, // belt item 7 
+    {panel_x + 78 + (28*7), panel_y + 3, 28, 26}, // belt item 8
+    {panel_x + 71 + (42 * 0), panel_y + 35, 34, 34}, // spell 1
+    {panel_x + 71 + (42 * 1), panel_y + 35, 34, 34}, // spell 2
+    {panel_x + 71 + (42 * 2), panel_y + 35, 34, 34}, // spell 3
+    {panel_x + 71 + (42 * 3), panel_y + 35, 34, 34}, // spell 4
+    {panel_x + 71 + (42 * 4), panel_y + 35, 34, 34}, // spell 5
+    {panel_x + 71 + (42 * 5), panel_y + 35, 34, 34}, // spell 6
 };
-
-int meters_rects[][4] = {
-    {panel_x +  34, panel_y + 14, 23, 51},
-    {panel_x + 329, panel_y + 14, 23, 51}
-};
-
-int base_belt_rect[4] = {panel_x + 78, panel_y + 3, 28, 26};
 
 int hovered_element = PANEL_ELEMENT_NONE;
 int pressed_element = PANEL_ELEMENT_NONE;
@@ -39,36 +48,13 @@ int pressed_element = PANEL_ELEMENT_NONE;
 void set_hovered_element()
 {
     int i;
-
-    for(i = 0; i < 6; i++) {
-        if(CoordInsideRect(MouseX, MouseY, btns_rects[i])) break;
+    for(i = PANEL_ELEMENT_BTN_CHR; i < PANEL_ELEMENT_NONE; i++) {
+        if(CoordInsideRect(MouseX, MouseY, panel_elements_rects[i])) 
+            break;
     }
-    if(i < 6) {
-        hovered_element = i;
-        if(pressed_element != hovered_element) pressed_element = PANEL_ELEMENT_NONE;
-        return;
-    }
-    
-    for(i = 0; i < 2; i++) {
-        if(CoordInsideRect(MouseX, MouseY, meters_rects[i])) break;
-    }
-    if(i < 2) {
-        hovered_element = 6 + i;
+    hovered_element = i;
+    if(pressed_element != hovered_element)
         pressed_element = PANEL_ELEMENT_NONE;
-        return;
-    }
-
-    for(i = 0; i < 8; i++) {
-        int curr_belt_slot[4] = {base_belt_rect[0] + (base_belt_rect[2] * i), base_belt_rect[1], base_belt_rect[2], base_belt_rect[3]};
-        if(CoordInsideRect(MouseX, MouseY, curr_belt_slot)) {
-            hovered_element = 8 + i;
-            if(pressed_element != hovered_element) pressed_element = PANEL_ELEMENT_NONE;
-            return;
-        }
-    }
-
-    hovered_element = PANEL_ELEMENT_NONE;
-    pressed_element = PANEL_ELEMENT_NONE;
 }
 
 

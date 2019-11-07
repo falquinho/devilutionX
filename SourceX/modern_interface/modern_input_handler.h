@@ -19,14 +19,20 @@ DEVILUTION_BEGIN_NAMESPACE
 #define PANEL_ELEMENT_BELT_6  13
 #define PANEL_ELEMENT_BELT_7  14
 #define PANEL_ELEMENT_BELT_8  15
-#define PANEL_ELEMENT_NONE    255
+#define PANEL_ELEMENT_SPELL_1 16
+#define PANEL_ELEMENT_SPELL_2 17
+#define PANEL_ELEMENT_SPELL_3 18
+#define PANEL_ELEMENT_SPELL_4 19
+#define PANEL_ELEMENT_SPELL_5 20
+#define PANEL_ELEMENT_SPELL_6 21
+#define PANEL_ELEMENT_NONE    22
 
 extern char* btns_tips[];
 
-extern int btns_rects[][4];
-extern int meters_rects[][4];
+extern int panel_elements_rects[][4];
 
 extern int hovered_element;
+
 extern int pressed_element;
 
 void modern_input_handler(int event);

@@ -37,7 +37,6 @@ void update_mana()
 
 void draw_item_belt()
 {
-	int frame;
 	int left   = panel_left + 77;
 	int bottom = panel_bottom - 42;
 	int frame_width = 28;
@@ -76,23 +75,24 @@ void draw_tooltip_if_needed()
 	if(hovered_element == PANEL_ELEMENT_NONE)
 		return;
 
-	if(hovered_element < 6)
-		return DrawTooltip(btns_rects[hovered_element], btns_tips[hovered_element]);
-		
-	if(hovered_element == PANEL_ELEMENT_LIFEBAR) {
-		char tooltip[26];
-		sprintf(tooltip, "%i/%i", plr[myplr]._pHitPoints >> 6, plr[myplr]._pMaxHP >> 6);
-		return DrawTooltip(meters_rects[0], tooltip);
-	}
-	if(hovered_element == PANEL_ELEMENT_MANABAR) {
-		char tooltip[26];
-		sprintf(tooltip, "%i/%i", plr[myplr]._pMana >> 6, plr[myplr]._pMaxMana >> 6);
-		return DrawTooltip(meters_rects[1], tooltip);
-	}
+	char tooltip[64];
 
-	if(hovered_element >= PANEL_ELEMENT_BELT_1 && hovered_element <= PANEL_ELEMENT_BELT_8) {
-		// get item tooltip somehow
-	}
+	if(hovered_element <= PANEL_ELEMENT_BTN_MNU)
+		sprintf(tooltip, "%s", btns_tips[hovered_element]);
+		
+	else if(hovered_element == PANEL_ELEMENT_LIFEBAR)
+		sprintf(tooltip, "%i/%i", plr[myplr]._pHitPoints >> 6, plr[myplr]._pMaxHP >> 6);
+	
+	else if(hovered_element == PANEL_ELEMENT_MANABAR)
+		sprintf(tooltip, "%i/%i", plr[myplr]._pMana >> 6, plr[myplr]._pMaxMana >> 6);
+
+	else if(hovered_element >= PANEL_ELEMENT_BELT_1 && hovered_element <= PANEL_ELEMENT_BELT_8)
+		sprintf(tooltip, "%s", plr[myplr].SpdList[hovered_element - PANEL_ELEMENT_BELT_1]._iName);
+
+	else
+		sprintf(tooltip, "%s", "dummy");
+	
+	DrawTooltip(panel_elements_rects[hovered_element], tooltip);
 }
 
 void draw_modern_control_panel()
