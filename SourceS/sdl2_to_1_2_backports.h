@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <math.h>
+#include <cstddef>
 
 #include "../SourceX/stubs.h"
 
@@ -202,28 +203,6 @@ SDL_FreePalette(SDL_Palette *palette)
 	}
 	SDL_free(palette->colors);
 	SDL_free(palette);
-}
-
-inline int SDL_SetPaletteColors(SDL_Palette *palette, const SDL_Color *colors,
-    int firstcolor, int ncolors)
-{
-	int status = 0;
-
-	/* Verify the parameters */
-	if (!palette) {
-		return -1;
-	}
-	if (ncolors > (palette->ncolors - firstcolor)) {
-		ncolors = (palette->ncolors - firstcolor);
-		status = -1;
-	}
-
-	if (colors != (palette->colors + firstcolor)) {
-		SDL_memcpy(palette->colors + firstcolor, colors,
-		    ncolors * sizeof(*colors));
-	}
-
-	return status;
 }
 
 //= Pixel formats

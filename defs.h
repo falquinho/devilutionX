@@ -91,8 +91,15 @@
 #define PAL16_RED		224
 #define PAL16_GRAY		240
 
-#define SCREEN_WIDTH	640
+#define SCREEN_WIDTH	832
 #define SCREEN_HEIGHT	480
+#define BASE_WIDTH		640
+#define BASE_HEIGHT		480
+#define WIDTH_DIFF		(SCREEN_WIDTH - BASE_WIDTH)
+#define HEIGHT_DIFF		(SCREEN_HEIGHT - BASE_HEIGHT)
+#define WIDTH_DIFF_2	(WIDTH_DIFF) / 2
+#define WIDTH_DIFF_4	(WIDTH_DIFF) / 4
+#define HEIGHT_DIFF_2	(HEIGHT_DIFF) / 2
 
 #define ZOOM_WIDTH		384
 #define ZOOM_HEIGHT		224
@@ -109,7 +116,7 @@
 #define BORDER_LEFT		64
 #define BORDER_TOP		160
 #define BORDER_RIGHT	64
-#define BORDER_BOTTOM	16
+#define BORDER_BOTTOM	0
 
 #define SCREEN_X		BORDER_LEFT
 #define SCREEN_Y		BORDER_TOP
@@ -163,3 +170,5 @@
 
 #define SwapLE32 SDL_SwapLE32
 #define SwapLE16 SDL_SwapLE16
+
+#define ErrSdl() ErrDlg("SDL Error", SDL_GetError(), __FILE__, __LINE__)

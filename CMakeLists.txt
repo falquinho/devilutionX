@@ -9,6 +9,7 @@ endif()
 option(ASAN "Enable address sanitizer" ON)
 option(UBSAN "Enable undefined behaviour sanitizer" ON)
 option(DEBUG "Enable debug mode in engine" ON)
+option(LTO "Enable link-time optimization (if supported by the toolchain)" OFF)
 option(SPAWN "Build the shareware version" OFF)
 option(DIST "Dynamically link only glibc and SDL2" OFF)
 option(FASTER "Enable FASTER in engine" ON)
@@ -17,23 +18,24 @@ option(NIGHTLY_BUILD "Enable options for nightly build" OFF)
 option(USE_SDL1 "Use SDL1.2 instead of SDL2" OFF)
 option(NONET "Disable network" OFF)
 
+include(CMake/git.cmake)
+get_git_tag(GIT_TAG)
+if(NOT CMAKE_BUILD_TYPE MATCHES "Release")
+  get_git_commit_hash(GIT_COMMIT_HASH)
+endif()
+
+project(DevilutionX
+  VERSION ${GIT_TAG}
+  LANGUAGES C CXX)
+
 if(BINARY_RELEASE)
   set(CMAKE_BUILD_TYPE "Release")
   set(ASAN OFF)
   set(UBSAN OFF)
   set(DEBUG OFF)
+  set(LTO ON)
   set(DIST ON)
   set(FASTER OFF)
-
-  # Use LTO on all compilers where it is supported.
-  include(CheckIPOSupported)
-  check_ipo_supported(RESULT result)
-  if(result)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
-    message(STATUS "LTO enabled")
-  else()
-    message(WARNING "LTO not supported by this compiler and/or CMake version")
-  endif()
 endif()
 
 if(NIGHTLY_BUILD)
@@ -41,27 +43,22 @@ if(NIGHTLY_BUILD)
   set(ASAN OFF)
   set(UBSAN OFF)
   set(DEBUG ON)
+  set(LTO ON)
   set(DIST ON)
   set(FASTER OFF)
 endif()
 
-execute_process(
-  COMMAND git describe --abbrev=0 --tags
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  OUTPUT_VARIABLE GIT_TAG
-  OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-if (NOT CMAKE_BUILD_TYPE MATCHES "Release")
-  execute_process(
-    COMMAND git log -1 --format=-%h
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_COMMIT_HASH
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(LTO)
+  # Use LTO on compilers where it is supported.
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT result OUTPUT lto_error)
+  if(result)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+  else()
+    message(WARNING "LTO not supported by this compiler and/or CMake version:")
+    message(WARNING ${lto_error})
+  endif()
 endif()
-
-project(DevilutionX
-  VERSION ${GIT_TAG}
-  LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${DevilutionX_SOURCE_DIR}/CMake")
 
@@ -79,7 +76,7 @@ if(HAIKU)
   set(ASAN OFF)
 endif()
 
-if(DIST)
+if(DIST OR DINGUX)
   set(sodium_USE_STATIC_LIBS ON)
 endif()
 
@@ -208,6 +205,7 @@ add_library(devilution STATIC
 
 set(devilutionx_SRCS
   SourceX/dx.cpp
+  SourceX/miniwin/ddraw.cpp
   SourceX/miniwin/misc.cpp
   SourceX/miniwin/misc_io.cpp
   SourceX/miniwin/misc_msg.cpp
@@ -216,6 +214,7 @@ set(devilutionx_SRCS
   SourceX/miniwin/thread.cpp
   SourceX/miniwin/dsound.cpp
   SourceX/modern_interface/modern_control_panel.cpp
+  SourceX/modern_interface/modern_input_handler.cpp
   SourceX/modern_interface/utils.cpp
   SourceX/sound.cpp
   SourceX/storm/storm.cpp
@@ -231,6 +230,7 @@ set(devilutionx_SRCS
   SourceX/DiabloUI/art.cpp
   SourceX/DiabloUI/button.cpp
   SourceX/DiabloUI/credits.cpp
+  SourceX/DiabloUI/credits_lines.cpp
   SourceX/DiabloUI/diabloui.cpp
   SourceX/DiabloUI/dialogs.cpp
   SourceX/DiabloUI/fonts.cpp
@@ -310,13 +310,21 @@ foreach(target devilution devilutionx)
     target_compile_options(${target} PUBLIC -fsanitize=address -fsanitize-recover=address)
     target_link_libraries(${target} PUBLIC -fsanitize=address -fsanitize-recover=address)
   endif()
+
   if(UBSAN)
     target_compile_options(${target} PUBLIC -fsanitize=undefined)
     target_link_libraries(${target} PUBLIC -fsanitize=undefined)
   endif()
+
+  if(DINGUX)
+    target_compile_definitions(${target} PRIVATE DINGUX)
+  endif()
+  if(RETROFW)
+    target_compile_definitions(${target} PRIVATE RETROFW)
+  endif()
 endforeach(target devilution devilutionx)
 
-if(DIST AND CMAKE_CXX_COMPILER_ID MATCHES "GCC")
+if(DIST AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   target_link_libraries(devilutionx PUBLIC -static-libgcc -static-libstdc++)
 endif()
 
@@ -351,7 +359,7 @@ if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   target_compile_options(devilution PRIVATE -fpermissive -w)
 
   # Warnings for devilutionX
-  target_compile_options(devilutionx PRIVATE -Wall -Wextra -Wno-write-strings -Wno-multichar -Wno-unused-parameter -Wno-missing-field-initializers -Wno-format-security)
+  target_compile_options(devilutionx PRIVATE -Wall -Wextra -Wno-write-strings -Wno-unused-parameter -Wno-missing-field-initializers -Wno-format-security)
 
   # For ARM and other default unsigned char platforms
   target_compile_options(devilution PRIVATE -fsigned-char)
@@ -400,4 +408,8 @@ if(APPLE)
   set(CPACK_GENERATOR "DragNDrop")
 
   include(CPack)
+endif()
+
+if(DINGUX)
+  set_target_properties(devilutionx PROPERTIES OUTPUT_NAME "devilutionx.dge")
 endif()

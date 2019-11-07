@@ -3,7 +3,7 @@
 
 Status | Platform
 ---:| ---
-[![CircleCI](https://circleci.com/gh/diasurgical/devilutionX.svg?style=svg)](https://circleci.com/gh/diasurgical/devilutionX) | Linux 32bit & 64bit, Windows 32bit
+[![CircleCI](https://circleci.com/gh/diasurgical/devilutionX.svg?style=svg)](https://circleci.com/gh/diasurgical/devilutionX) | Linux 32bit & 64bit, Windows 32bit, SDL1
 [![Build Status](https://travis-ci.org/diasurgical/devilutionX.svg?branch=master)](https://travis-ci.org/diasurgical/devilutionX) | macOS 64bit
 [![Build status](https://ci.appveyor.com/api/projects/status/1a0jus2372qvksht?svg=true)](https://ci.appveyor.com/project/AJenbo/devilutionx) | Windows MSVC
 
@@ -26,7 +26,7 @@ sudo apt-get install cmake g++ libsdl2-mixer-dev libsdl2-ttf-dev libsodium-dev
 ```
 ### Installing dependencies on Fedora
 ```
-sudo dnf install cmake glibc-devel SDL2-devel SDL2_ttf-devel SDL2_mixer-devel libsodium-devel libasan
+sudo dnf install cmake glibc-devel SDL2-devel SDL2_ttf-devel SDL2_mixer-devel libsodium-devel libasan libubsan
 ```
 ### Compiling
 ```
@@ -63,7 +63,7 @@ cmake --build . -j $(sysctl -n hw.ncpu)
 
 <details><summary>Windows via MinGW</summary>
 
-### Installing dependencies on Debian and Ubuntu
+### Installing dependencies on WSL, Debian and Ubuntu
 
 Download and place the 32bit MinGW Development Libraries of [SDL2](https://www.libsdl.org/download-2.0.php), [SDL2_mixer](https://www.libsdl.org/projects/SDL_mixer/), [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/) and [Libsodium](https://github.com/jedisct1/libsodium/releases) in `/usr/i686-w64-mingw32`.
 
@@ -73,7 +73,7 @@ sudo apt-get install cmake gcc-mingw-w64-i686 g++-mingw-w64-i686
 ### Compiling
 ```
 cd build
-cmake -DASAN=OFF -DCMAKE_TOOLCHAIN_FILE=../CMake/mingwcc.cmake ..
+cmake -DASAN=OFF -UBSAN=OFF -DCMAKE_TOOLCHAIN_FILE=../CMake/mingwcc.cmake ..
 cmake --build . -j $(nproc)
 ```
 </details>
@@ -128,15 +128,59 @@ pkgman install cmake devel:libsdl2 devel:libsdl2_mixer devel:libsdl2_ttf devel:l
 ### Compiling on 32 bit Haiku
 ```
 cd build
-cmake -DCMAKE_C_COMPILER=gcc-x86 -DCMAKE_CXX_COMPILER=g++-x86 -DBINARY_RELEASE=ON ..
+setarch x86 #Switch to secondary compiler toolchain (GCC8+)
+cmake ..
 cmake --build . -j $(nproc)
 ```
 ### Compiling on 64 bit Haiku
+No setarch required, as there is no secondary toolchain on x86_64, and the primary is GCC8+
 ```
 cd build
 cmake ..
 cmake --build . -j $(nproc)
 ```
+</details>
+
+<details><summary>OpenDingux / RetroFW</summary>
+
+DevilutionX uses buildroot to build packages for OpenDingux and RetroFW.
+
+The build script does the following:
+
+1. Downloads and configures the buildroot if necessary.
+2. Builds the executable (using CMake).
+3. Packages the executable and all related resources into an `.ipk` package.
+
+The buildroot uses ~4 GiB of disk space and can take almost an hour to build.
+
+For OpenDingux builds `mksquashfs` needs to be installed.
+
+### RetroFW (RS97, RG300, LDK)
+
+The RetroFW build uses the buildroot at `$HOME/buildroot-2018.02.9-retrofw`.
+
+~~~ bash
+Packaging/OpenDingux/build-retrofw.sh
+~~~
+
+### OpenDingux (RG350, GCW0)
+
+This OpenDingux build uses the buildroot at `$HOME/buildroot-rg350-devilutionx`.
+
+~~~ bash
+Packaging/OpenDingux/build-rg350.sh
+~~~
+
+
+### Old OpenDingux (RS90)
+
+This OpenDingux build uses the buildroot at `$HOME/buildroot-rs90-devilutionx`.
+
+~~~ bash
+Packaging/OpenDingux/build-rs90.sh
+~~~
+
+
 </details>
 
 ## CMake arguments

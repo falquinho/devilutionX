@@ -36,6 +36,8 @@ void DrawTTF(const char *text, const SDL_Rect &rect, int flags,
     const SDL_Color &text_color, const SDL_Color &shadow_color,
     TtfSurfaceCache **render_cache)
 {
+	if (font == nullptr || text == nullptr || *text == '\0')
+		return;
 	if (*render_cache == nullptr) {
 		*render_cache = new TtfSurfaceCache();
 		const auto x_align = XAlignmentFromFlags(flags);
@@ -57,9 +59,9 @@ void DrawTTF(const char *text, const SDL_Rect &rect, int flags,
 	++shadow_rect.x;
 	++shadow_rect.y;
 	if (SDL_BlitSurface(shadow_surface, nullptr, pal_surface, &shadow_rect) <= -1)
-		SDL_Log(SDL_GetError());
+		ErrSdl();
 	if (SDL_BlitSurface(text_surface, nullptr, pal_surface, &dest_rect) <= -1)
-		SDL_Log(SDL_GetError());
+		ErrSdl();
 }
 
 void DrawArtStr(const char *text, const SDL_Rect &rect, int flags, bool drawTextCursor)

@@ -1,6 +1,8 @@
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
+#include "../SourceX/modern_interface/modern_control_panel.h"
+#include "../SourceX/modern_interface/modern_input_handler.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -73,7 +75,6 @@ void FreeGameMem()
 	MemFreeDbg(pMegaTiles);
 	MemFreeDbg(pLevelPieces);
 	MemFreeDbg(pSpecialCels);
-	MemFreeDbg(pSpeedCels);
 
 	FreeMissiles();
 	FreeMonsters();
@@ -161,9 +162,7 @@ void run_game_loop(unsigned int uMsg)
 				continue;
 			}
 		} else if (!nthread_has_500ms_passed(FALSE)) {
-#ifdef SLEEPFIX
-			Sleep(1);
-#endif
+			DrawAndBlit();
 			continue;
 		}
 		multi_process_network_packets();
@@ -434,9 +433,6 @@ void diablo_init_screen()
 	ScrollInfo._syoff = 0;
 	ScrollInfo._sdir = SDIR_NONE;
 
-	for (i = 0; i < 1024; i++)
-		PitchTbl[i] = i * BUFFER_WIDTH;
-
 	ClrDiabloMsg();
 }
 
@@ -523,6 +519,8 @@ LRESULT CALLBACK DisableInputWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	modern_input_handler(uMsg);
+	
 	switch (uMsg) {
 	case WM_KEYDOWN:
 		PressKey(wParam);
@@ -628,19 +626,20 @@ BOOL LeftMouseDown(int wParam)
 				SetSpell();
 			} else if (stextflag) {
 				CheckStoreBtn();
-			} else if (MouseY < PANEL_TOP) {
+				//allows clicking through the sides of the panel (it doesn't cover the whole screen on higher resolutions)
+			} else if (MouseY < PANEL_TOP || MouseX < WIDTH_DIFF_2 || MouseX > SCREEN_WIDTH - WIDTH_DIFF_2) {
 				if (!gmenu_exception() && !TryIconCurs()) {
 					if (questlog && MouseX > 32 && MouseX < 288 && MouseY > 32 && MouseY < 308) {
 						QuestlogESC();
 					} else if (qtextflag) {
 						qtextflag = FALSE;
 						sfx_stop();
-					} else if (chrflag && MouseX < 320) {
+					} else if (chrflag && MouseX < 320 && MouseY < 352) {
 						CheckChrBtns();
-					} else if (invflag && MouseX > 320) {
+					} else if (invflag && MouseX > SCREEN_WIDTH - 320 && MouseY < 352) {
 						if (!dropGoldFlag)
 							CheckInvItem();
-					} else if (sbookflag && MouseX > 320) {
+					} else if (sbookflag && MouseX > SCREEN_WIDTH - 320 && MouseY < 352) {
 						CheckSBook();
 					} else if (pcurs >= CURSOR_FIRSTITEM) {
 						if (TryInvPut()) {
@@ -794,8 +793,8 @@ void RightMouseDown()
 		} else if (!stextflag) {
 			if (spselflag) {
 				SetSpell();
-			} else if (MouseY >= PANEL_TOP
-			    || (!sbookflag || MouseX <= 320)
+			} else if (MouseY >= 352
+			    || (!sbookflag || (MouseX <= SCREEN_WIDTH - 320))
 			        && !TryIconCurs()
 			        && (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))) {
 				if (pcurs == 1) {
@@ -1017,10 +1016,12 @@ void PressKey(int vkey)
 		DoAutoMap();
 	} else if (vkey == VK_SPACE) {
 		if (!chrflag && invflag && MouseX < 480 && MouseY < PANEL_TOP) {
-			SetCursorPos(MouseX + 160, MouseY);
+			if (SCREEN_WIDTH == PANEL_WIDTH)
+				SetCursorPos(MouseX + 160, MouseY);
 		}
 		if (!invflag && chrflag && MouseX > 160 && MouseY < PANEL_TOP) {
-			SetCursorPos(MouseX - 160, MouseY);
+			if (SCREEN_WIDTH == PANEL_WIDTH)
+				SetCursorPos(MouseX - 160, MouseY);
 		}
 		helpflag = 0;
 		invflag = 0;
@@ -1091,11 +1092,13 @@ void PressChar(int vkey)
 			invflag = invflag == 0;
 			if (!invflag || chrflag) {
 				if (MouseX < 480 && MouseY < PANEL_TOP) {
-					SetCursorPos(MouseX + 160, MouseY);
+					if (SCREEN_WIDTH == PANEL_WIDTH)
+						SetCursorPos(MouseX + 160, MouseY);
 				}
 			} else {
 				if (MouseX > 160 && MouseY < PANEL_TOP) {
-					SetCursorPos(MouseX - 160, MouseY);
+					if (SCREEN_WIDTH == PANEL_WIDTH)
+						SetCursorPos(MouseX - 160, MouseY);
 				}
 			}
 		}
@@ -1107,11 +1110,13 @@ void PressChar(int vkey)
 			chrflag = !chrflag;
 			if (!chrflag || invflag) {
 				if (MouseX > 160 && MouseY < PANEL_TOP) {
-					SetCursorPos(MouseX - 160, MouseY);
+					if (SCREEN_WIDTH == PANEL_WIDTH)
+						SetCursorPos(MouseX - 160, MouseY);
 				}
 			} else {
 				if (MouseX < 480 && MouseY < PANEL_TOP) {
-					SetCursorPos(MouseX + 160, MouseY);
+					if (SCREEN_WIDTH == PANEL_WIDTH)
+						SetCursorPos(MouseX + 160, MouseY);
 				}
 			}
 		}
@@ -1364,8 +1369,6 @@ void LoadLvlGFX()
 
 void LoadAllGFX()
 {
-	/// ASSERT: assert(! pSpeedCels);
-	pSpeedCels = DiabloAllocPtr(0x100000);
 	IncProgress();
 	IncProgress();
 	InitObjectGFX();
@@ -1470,7 +1473,11 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 			InitThemes();
 			LoadAllGFX();
 		} else {
+			IncProgress();
+			IncProgress();
 			InitMissileGFX();
+			IncProgress();
+			IncProgress();
 		}
 
 		IncProgress();
@@ -1508,9 +1515,11 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 				glMid1Seed[currlevel] = GetRndSeed();
 				InitMonsters();
 				glMid2Seed[currlevel] = GetRndSeed();
+				IncProgress();
 				InitObjects();
 				InitItems();
 				CreateThemeRooms();
+				IncProgress();
 				glMid3Seed[currlevel] = GetRndSeed();
 				InitMissiles();
 				InitDead();
@@ -1553,19 +1562,22 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 			ResyncMPQuests();
 #ifndef SPAWN
 	} else {
-		/// ASSERT: assert(! pSpeedCels);
-		pSpeedCels = DiabloAllocPtr(0x100000);
 		LoadSetMap();
 		IncProgress();
 		GetLevelMTypes();
+		IncProgress();
 		InitMonsters();
+		IncProgress();
 		InitMissileGFX();
+		IncProgress();
 		InitDead();
+		IncProgress();
 		FillSolidBlockTbls();
 		IncProgress();
 
 		if (lvldir == 5)
 			GetPortalLvlPos();
+		IncProgress();
 
 		for (i = 0; i < MAX_PLRS; i++) {
 			if (plr[i].plractive && currlevel == plr[i].plrlevel) {
@@ -1574,6 +1586,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 					InitPlayer(i, firstflag);
 			}
 		}
+		IncProgress();
 
 		InitMultiView();
 		IncProgress();
@@ -1614,8 +1627,9 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 
 	if (firstflag) {
 		InitControlPan();
-		IncProgress();
+		load_modern_control_panel();
 	}
+	IncProgress();
 	if (leveltype != DTYPE_TOWN) {
 		ProcessLightList();
 		ProcessVisionList();

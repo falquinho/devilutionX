@@ -178,18 +178,19 @@ void CheckCursMove()
 
 	sx = MouseX;
 	sy = MouseY;
-
-	if (chrflag || questlog) {
-		if (sx >= 160) {
-			sx -= 160;
-		} else {
-			sx = 0;
-		}
-	} else if (invflag || sbookflag) {
-		if (sx <= 320) {
-			sx += 160;
-		} else {
-			sx = 0;
+	if (SCREEN_WIDTH == PANEL_WIDTH) {
+		if (chrflag || questlog) {
+			if (sx >= 160) {
+				sx -= 160;
+			} else {
+				sx = 0;
+			}
+		} else if (invflag || sbookflag) {
+			if (sx <= 320) {
+				sx += 160;
+			} else {
+				sx = 0;
+			}
 		}
 	}
 	if (sy > PANEL_TOP - 1 && track_isscrolling()) {
@@ -225,7 +226,7 @@ void CheckCursMove()
 	ty = sy >> 5;
 	px = sx & 0x3F;
 	py = sy & 0x1F;
-	mx = ViewX + tx + ty - (zoomflag ? 10 : 5);
+	mx = ViewX + tx + ty - (zoomflag ? SCREEN_WIDTH / 64 : SCREEN_WIDTH / 128);
 	my = ViewY + ty - tx;
 
 	flipy = py<px>> 1;
@@ -273,18 +274,21 @@ void CheckCursMove()
 		cursmy = my;
 		return;
 	}
-	if (MouseY > PANEL_TOP) {
+	//allows clicking through the sides of the panel (it doesn't cover the whole screen on higher resolutions)
+	if (MouseY > PANEL_TOP && MouseX >= WIDTH_DIFF_2 && MouseX <= SCREEN_WIDTH - WIDTH_DIFF_2) {
 		CheckPanelInfo();
 		return;
 	}
 	if (doomflag) {
 		return;
 	}
-	if (invflag && MouseX > 320) {
+	//allows clicking below inventory panel
+	if (invflag && MouseX > SCREEN_WIDTH - 320 && MouseY < 352) {
 		pcursinvitem = CheckInvHLight();
 		return;
 	}
-	if (sbookflag && MouseX > 320) {
+	//allows clicking below spellbook panel
+	if (sbookflag && MouseX > SCREEN_WIDTH - 320 && MouseY < 352) {
 		return;
 	}
 	if ((chrflag || questlog) && MouseX < 320) {

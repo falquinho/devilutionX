@@ -967,7 +967,7 @@ void CheckEFlag(int pnum, BOOL flag)
 	x = plr[pnum].WorldX - 1;
 	y = plr[pnum].WorldY + 1;
 	bitflags = 0;
-	pieces = &dpiece_defs_map_1[IsometricCoord(x, y)];
+	pieces = &dpiece_defs_map_2[x][y];
 
 	for (i = 2; i < 10; i++) {
 		bitflags |= pieces->mt[i];
@@ -986,7 +986,7 @@ void CheckEFlag(int pnum, BOOL flag)
 	x = plr[pnum].WorldX;
 	y = plr[pnum].WorldY + 2;
 	bitflags = 0;
-	pieces = &dpiece_defs_map_1[IsometricCoord(x, y)];
+	pieces = &dpiece_defs_map_2[x][y];
 
 	for (i = 2; i < 10; i++) {
 		bitflags |= pieces->mt[i];
@@ -999,7 +999,7 @@ void CheckEFlag(int pnum, BOOL flag)
 	x = plr[pnum].WorldX - 2;
 	y = plr[pnum].WorldY + 1;
 	bitflags = 0;
-	pieces = &dpiece_defs_map_1[IsometricCoord(x, y)];
+	pieces = &dpiece_defs_map_2[x][y];
 
 	for (i = 2; i < 10; i++) {
 		bitflags |= pieces->mt[i];
@@ -1293,6 +1293,9 @@ void StartWalk(int pnum, int xvel, int yvel, int xadd, int yadd, int EndDir, int
 	}
 }
 
+#if defined(__clang__) || defined(__GNUC__)
+__attribute__((no_sanitize("shift-base")))
+#endif
 void StartWalk2(int pnum, int xvel, int yvel, int xoff, int yoff, int xadd, int yadd, int EndDir, int sdir)
 {
 	int px, py;
@@ -1372,6 +1375,9 @@ void StartWalk2(int pnum, int xvel, int yvel, int xoff, int yoff, int xadd, int 
 	}
 }
 
+#if defined(__clang__) || defined(__GNUC__)
+__attribute__((no_sanitize("shift-base")))
+#endif
 void StartWalk3(int pnum, int xvel, int yvel, int xoff, int yoff, int xadd, int yadd, int mapx, int mapy, int EndDir, int sdir)
 {
 	int px, py, x, y;
@@ -1678,6 +1684,9 @@ void RespawnDeadItem(ItemStruct *itm, int x, int y)
 	itm->_itype = ITYPE_NONE;
 }
 
+#if defined(__clang__) || defined(__GNUC__)
+__attribute__((no_sanitize("shift-base")))
+#endif
 void StartPlayerKill(int pnum, int earflag)
 {
 	BOOL diablolevel;
@@ -2019,6 +2028,9 @@ void InitLevelChange(int pnum)
 	}
 }
 
+#if defined(__clang__) || defined(__GNUC__)
+__attribute__((no_sanitize("shift-base")))
+#endif
 void StartNewLvl(int pnum, int fom, int lvl)
 {
 	InitLevelChange(pnum);
@@ -3673,8 +3685,8 @@ void CheckPlrSpell()
 	}
 
 	if (pcurs != CURSOR_HAND
-	    || MouseY >= PANEL_TOP
-	    || (chrflag && MouseX < 320 || invflag && MouseX > 320)
+	    || (MouseY >= PANEL_TOP && MouseX >= WIDTH_DIFF_2 && MouseX <= SCREEN_WIDTH - WIDTH_DIFF_2)
+	    || ((chrflag && MouseX < 320 && MouseY < 352) || ((invflag || sbookflag) && MouseX > SCREEN_WIDTH - 320 && MouseY < 352))
 	        && rspell != SPL_HEAL
 	        && rspell != SPL_IDENTIFY
 	        && rspell != SPL_REPAIR

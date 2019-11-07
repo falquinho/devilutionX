@@ -1,5 +1,6 @@
 #include "modern_control_panel.h"
 #include "utils.h"
+#include "modern_input_handler.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -50,21 +51,72 @@ void draw_item_belt()
 		int frame = plr[myplr].SpdList[i]._iCurs + CURSOR_FIRSTITEM;
 
 		if (plr[myplr].SpdList[i]._iStatFlag)
-			CelDrawHdrOnly(left + (hor_space * i), bottom, pCursCels, frame, frame_width, 0, 8);
+			CelClippedDraw(left + (hor_space * i), bottom, pCursCels, frame, frame_width);
 		else
-			CelDrawHdrLightRed(left + (hor_space * i), bottom, pCursCels, frame, frame_width, 0, 8, 1);
+			CelDrawLightRed(left + (hor_space * i), bottom, pCursCels, frame, frame_width, 0, 8, 1);
 		
-		char str[] = {i+49,'\0'};
-		DrawString(left - SCREEN_X + 20 + (i*hor_space), bottom - SCREEN_Y - 12, str);
+		DrawChar(left - SCREEN_X + 20 + (i*hor_space), bottom - SCREEN_Y - 12, i + 49);
 	}		
+}
+
+char hotkeys[6][4] = {
+	"Q", "W", "E", "R", "LMB", "RMB"
+};
+void draw_spellbar()
+{
+	int x = panel_left + 84 - SCREEN_X;
+	int y = panel_bottom - 8 - SCREEN_Y;
+	for(int i = 0; i < 6; i++, x += 42) {
+		DrawString(x - (i >= 4? 12: 0), y, hotkeys[i]);
+	}
+}
+
+void draw_tooltip_if_needed()
+{
+	if(hovered_element == PANEL_ELEMENT_NONE)
+		return;
+
+	if(hovered_element < 6)
+		return DrawTooltip(btns_rects[hovered_element], btns_tips[hovered_element]);
+		
+	if(hovered_element == PANEL_ELEMENT_LIFEBAR) {
+		char tooltip[26];
+		sprintf(tooltip, "%i/%i", plr[myplr]._pHitPoints >> 6, plr[myplr]._pMaxHP >> 6);
+		return DrawTooltip(meters_rects[0], tooltip);
+	}
+	if(hovered_element == PANEL_ELEMENT_MANABAR) {
+		char tooltip[26];
+		sprintf(tooltip, "%i/%i", plr[myplr]._pMana >> 6, plr[myplr]._pMaxMana >> 6);
+		return DrawTooltip(meters_rects[1], tooltip);
+	}
+
+	if(hovered_element >= PANEL_ELEMENT_BELT_1 && hovered_element <= PANEL_ELEMENT_BELT_8) {
+		// get item tooltip somehow
+	}
 }
 
 void draw_modern_control_panel()
 {
-	CelDecodeOnly( panel_left, panel_bottom, ctrl_panel_cel, 1, panel_width);
+	CelDraw( panel_left, panel_bottom, ctrl_panel_cel, 1, panel_width);
 	update_life();
 	update_mana();
 	draw_item_belt();
+	draw_spellbar();
+
+	if(automapflag)
+		DrawAutomap();
+
+	if (invflag)
+		DrawInv();
+	else if (sbookflag)
+		DrawSpellBook();
+
+	if(chrflag)
+		DrawChr();
+	else if(questlog)
+		DrawQuestLog();
+	
+	draw_tooltip_if_needed();
 }
 
 void unload_modern_control_panel()
