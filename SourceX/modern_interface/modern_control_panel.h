@@ -6,6 +6,7 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 extern BYTE* ctrl_panel_cel;
+extern BYTE* ascii_charmap_cel;
 
 extern int panel_width;  
 extern int panel_left;   

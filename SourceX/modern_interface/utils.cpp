@@ -3,7 +3,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-int char_w = 13;
+int char_w = 6;
 int line_h = 12;
 
 
@@ -35,8 +35,8 @@ void DrawRectangle(int left, int bottom, int width, int height, BYTE color, bool
 
 void DrawChar(int x, int y, char c)
 {
-	int cel_index = fontframe[gbFontTransTbl[c]];
-	CelDraw(SCREEN_X + x, SCREEN_Y + y + line_h, pPanelText, cel_index, char_w);
+	int frame = (c - 31) < 1? 1 : (c - 31);
+	CelDraw(SCREEN_X + x, SCREEN_Y + y + line_h, ascii_charmap_cel, frame, char_w);
 }
 
 
@@ -87,7 +87,7 @@ void DrawTooltip(int* el_rect, char* str)
 	int x = (el_rect[0] + el_rect[2]/2) - tt_w/2 < 0? 0 : (el_rect[0] + el_rect[2]/2) - tt_w/2;
 	int y = el_rect[1] - tt_h < 0? 0 : el_rect[1] - tt_h;
 
-	DrawRectangle(SCREEN_X + x, SCREEN_Y + y + tt_h, tt_w, tt_h, PAL16_GRAY + 15, true);
+	DrawRectangle(SCREEN_X + x, SCREEN_Y + y + tt_h, tt_w, tt_h, PAL16_GRAY + 15, false);
 	DrawString(x + 4, y + 2, str);
 }
 

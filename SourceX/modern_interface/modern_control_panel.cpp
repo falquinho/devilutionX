@@ -5,6 +5,7 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 BYTE* ctrl_panel_cel;
+BYTE* ascii_charmap_cel;
 
 int panel_width  = 386;
 int panel_left   = SCREEN_X + (SCREEN_WIDTH - panel_width)/2;
@@ -17,6 +18,7 @@ int meter_w = 23;
 void load_modern_control_panel()
 {
 	ctrl_panel_cel = LoadFileInMem("assets\\modern_panel.cel", NULL);
+	ascii_charmap_cel = LoadFileInMem("assets\\asciicharmap.cel", NULL);
 }
 
 void update_life()

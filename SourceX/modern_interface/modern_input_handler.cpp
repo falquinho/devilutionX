@@ -9,12 +9,12 @@ int panel_x = (SCREEN_WIDTH - panel_width)/2;
 int panel_y = SCREEN_HEIGHT - 72 - 8;
 
 char* btns_tips[] = {
-    "CHARACTER(A)",
-    "QUESTS(S)",
-    "MAP(D)",
-    "INVENTORY(Z)",
-    "SPELLBOOK(X)",
-    "MENU(C)"
+    "Character (A)",
+    "Quests (S)",
+    "Map (D)",
+    "Inventory (Z)",
+    "Spellbook (X)",
+    "Menu (C)"
 };
 
 int panel_elements_rects[][4] = {
