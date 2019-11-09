@@ -2,6 +2,7 @@
 #define __UTILS_H__
 
 #include "devilution.h"
+#include "modern_control_panel.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
