@@ -2,7 +2,6 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
 #include "../SourceX/modern_interface/modern_control_panel.h"
-#include "../SourceX/modern_interface/modern_input_handler.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -519,8 +518,6 @@ LRESULT CALLBACK DisableInputWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	modern_input_handler(uMsg);
-	
 	switch (uMsg) {
 	case WM_KEYDOWN:
 		PressKey(wParam);
@@ -1627,7 +1624,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 
 	if (firstflag) {
 		InitControlPan();
-		load_modern_control_panel();
+		LoadModernPanel();
 	}
 	IncProgress();
 	if (leveltype != DTYPE_TOWN) {

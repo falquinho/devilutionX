@@ -1,27 +1,66 @@
 #include "modern_control_panel.h"
 #include "utils.h"
-#include "modern_input_handler.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
 BYTE* ctrl_panel_cel;
 BYTE* ascii_charmap_cel;
+BYTE* spellicons_sm_cel;
 
-int panel_width  = 386;
-int panel_left   = SCREEN_X + (SCREEN_WIDTH - panel_width)/2;
-int panel_bottom = SCREEN_Y + SCREEN_HEIGHT - 8;
+int panel_rect[4] = {
+	(SCREEN_WIDTH - 386)/2, // x
+	SCREEN_HEIGHT - 71 - 8, // y
+	386,                    // width
+	71                      // height
+};
+
+int panel_left   = SCREEN_X + panel_rect[0];
+int panel_bottom = SCREEN_Y + panel_rect[1] + panel_rect[3];
+
+int panel_x = panel_rect[0];
+int panel_y = panel_rect[1];
+int panel_elements_rects[][4] = {
+    {panel_x +   9, panel_y + 14, 16, 16}, // character button
+    {panel_x +   9, panel_y + 31, 16, 16}, // quest button 
+    {panel_x +   9, panel_y + 48, 16, 16}, // map button
+    {panel_x + 361, panel_y + 14, 16, 16}, // inventory button
+    {panel_x + 361, panel_y + 31, 16, 16}, // spellbook button
+    {panel_x + 361, panel_y + 48, 16, 16}, // menu button
+    {panel_x +  34, panel_y + 14, 23, 51}, // life meter  
+    {panel_x + 329, panel_y + 14, 23, 51}, // mana meter
+    {panel_x + 78 + (28*0), panel_y + 3, 28, 26}, // belt item 1
+    {panel_x + 78 + (28*1), panel_y + 3, 28, 26}, // belt item 2 
+    {panel_x + 78 + (28*2), panel_y + 3, 28, 26}, // belt item 3 
+    {panel_x + 78 + (28*3), panel_y + 3, 28, 26}, // belt item 4 
+    {panel_x + 78 + (28*4), panel_y + 3, 28, 26}, // belt item 5 
+    {panel_x + 78 + (28*5), panel_y + 3, 28, 26}, // belt item 6 
+    {panel_x + 78 + (28*6), panel_y + 3, 28, 26}, // belt item 7 
+    {panel_x + 78 + (28*7), panel_y + 3, 28, 26}, // belt item 8
+    {panel_x + 71 + (42 * 0), panel_y + 35, 34, 34}, // spell 1
+    {panel_x + 71 + (42 * 1), panel_y + 35, 34, 34}, // spell 2
+    {panel_x + 71 + (42 * 2), panel_y + 35, 34, 34}, // spell 3
+    {panel_x + 71 + (42 * 3), panel_y + 35, 34, 34}, // spell 4
+    {panel_x + 71 + (42 * 4), panel_y + 35, 34, 34}, // spell 5
+    {panel_x + 71 + (42 * 5), panel_y + 35, 34, 34}, // spell 6
+};
+
+int quickspells[4] = {
+	SPL_NULL, SPL_NULL, SPL_NULL, SPL_NULL
+};
+
+void LoadModernPanel()
+{
+	ctrl_panel_cel    = LoadFileInMem("assets\\modern_panel.cel", NULL);
+	ascii_charmap_cel = LoadFileInMem("assets\\asciicharmap.cel", NULL);
+	spellicons_sm_cel = LoadFileInMem("assets\\spellicons_sm.cel", NULL);
+}
+
 
 // Sizes of the life and mana meters:
 int meter_h = 51;
 int meter_w = 23;
 
-void load_modern_control_panel()
-{
-	ctrl_panel_cel = LoadFileInMem("assets\\modern_panel.cel", NULL);
-	ascii_charmap_cel = LoadFileInMem("assets\\asciicharmap.cel", NULL);
-}
-
-void update_life()
+void DrawLifeMeter()
 {
 	int curr_h = ((double)plr[myplr]._pHitPoints / (double)plr[myplr]._pMaxHP) * meter_h;
 	int left   = panel_left   + 34;
@@ -29,7 +68,7 @@ void update_life()
 	DrawRectangle(left, bottom, meter_w, curr_h, PAL8_RED + 6, false);
 }
 
-void update_mana()
+void DrawManaMeter()
 {
 	int curr_h = ((double)plr[myplr]._pMana / (double)plr[myplr]._pMaxMana) * meter_h;
 	int left   = panel_left   + 329;
@@ -37,7 +76,8 @@ void update_mana()
 	DrawRectangle(left, bottom, meter_w, curr_h, PAL8_BLUE + 6, false);
 }
 
-void draw_item_belt()
+
+void DrawItemBelt()
 {
 	int left   = panel_left + 77;
 	int bottom = panel_bottom - 42;
@@ -60,70 +100,27 @@ void draw_item_belt()
 	}		
 }
 
+
+// labels to draw on spellbar
 char hotkeys[6][4] = {
-	"Q", "W", "E", "R", "LMB", "RMB"
+	"Q", "W", "E", "R", "T", "RMB"
 };
-void draw_spellbar()
+void DrawSpellBar()
 {
 	int x = panel_left + 84 - SCREEN_X;
 	int y = panel_bottom - 8 - SCREEN_Y;
 	for(int i = 0; i < 6; i++, x += 42) {
-		DrawString(x - (i >= 4? 12: 0), y, hotkeys[i]);
+		DrawString(x - (i >= 5? 6: 0), y, hotkeys[i]);
 	}
 }
 
-void draw_tooltip_if_needed()
+
+void DrawModernPanel()
 {
-	if(hovered_element == PANEL_ELEMENT_NONE)
-		return;
-
-	char tooltip[64];
-
-	if(hovered_element <= PANEL_ELEMENT_BTN_MNU)
-		sprintf(tooltip, "%s", btns_tips[hovered_element]);
-		
-	else if(hovered_element == PANEL_ELEMENT_LIFEBAR)
-		sprintf(tooltip, "%i/%i", plr[myplr]._pHitPoints >> 6, plr[myplr]._pMaxHP >> 6);
-	
-	else if(hovered_element == PANEL_ELEMENT_MANABAR)
-		sprintf(tooltip, "%i/%i", plr[myplr]._pMana >> 6, plr[myplr]._pMaxMana >> 6);
-
-	else if(hovered_element >= PANEL_ELEMENT_BELT_1 && hovered_element <= PANEL_ELEMENT_BELT_8)
-		sprintf(tooltip, "%s", plr[myplr].SpdList[hovered_element - PANEL_ELEMENT_BELT_1]._iName);
-
-	else
-		sprintf(tooltip, "%s", "dummy");
-	
-	DrawTooltip(panel_elements_rects[hovered_element], tooltip);
-}
-
-void draw_modern_control_panel()
-{
-	CelDraw( panel_left, panel_bottom, ctrl_panel_cel, 1, panel_width);
-	update_life();
-	update_mana();
-	draw_item_belt();
-	draw_spellbar();
-
-	if(automapflag)
-		DrawAutomap();
-
-	if (invflag)
-		DrawInv();
-	else if (sbookflag)
-		DrawSpellBook();
-
-	if(chrflag)
-		DrawChr();
-	else if(questlog)
-		DrawQuestLog();
-	
-	draw_tooltip_if_needed();
-}
-
-void unload_modern_control_panel()
-{
-
+	CelDraw( panel_left, panel_bottom, ctrl_panel_cel, 1, panel_rect[2]);
+	DrawLifeMeter();
+	DrawManaMeter();
+	DrawSpellBar();
 }
 
 DEVILUTION_END_NAMESPACE
