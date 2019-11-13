@@ -20,14 +20,13 @@ void SetPixel(int sx, int sy, BYTE col)
 }
 
 
-void DrawRectangle(int left, int bottom, int width, int height, BYTE color, bool dither)
+void DrawRectangle(int rect[4], BYTE color, bool dither)
 {
-	for (int y = 0; y < height; y++) {
-		for(int x = 0; x < width; x++) {
-			if(!dither)
-				SetPixel(left + x, bottom - y, color);
-			else if(x%2 == y%2)
-				SetPixel(left + x, bottom - y, color);
+	for (int y = 0; y < rect[3]; y++) {
+		for(int x = 0; x < rect[2]; x++) {
+			if(dither && x%2 != y%2)
+				continue;
+			SetPixel(SCREEN_X + rect[0] + x, SCREEN_Y + rect[1] + y, color);
 		}
 	}
 }
@@ -55,49 +54,6 @@ void DrawString(int x, int y, char* str)
 }
 
 
-int GetStringRectWidth(char* str)
-{
-	int width  = 0;
-	int curr_width = 0;
-	for(int i = 0; str[i] != '\0'; i++, curr_width += char_w) {
-		if(str[i] == '\n') {
-			width = width > curr_width? width : curr_width;
-			curr_width = 0;
-		}
-	}
-	return width > curr_width? width : curr_width;
-}
-
-
-int GetStringRectHeight(char* str)
-{
-	int height = line_h;
-	for(int i = 0; str[i] != '\0'; i++) {
-		if(str[i] == '\n') height += line_h;
-	}
-	return height;
-}
-
-
-void DrawTooltip(int* el_rect, char* str)
-{
-	int tt_h = GetStringRectHeight(str) + 4;
-	int tt_w = GetStringRectWidth(str)  + 4;
-
-	int x = (el_rect[0] + el_rect[2]/2) - tt_w/2 < 0? 0 : (el_rect[0] + el_rect[2]/2) - tt_w/2;
-	int y = el_rect[1] - tt_h < 0? 0 : el_rect[1] - tt_h;
-
-	DrawRectangle(SCREEN_X + x, SCREEN_Y + y + tt_h, tt_w, tt_h, PAL16_GRAY + 15, false);
-	DrawString(x + 4, y + 2, str);
-}
-
-
-void DrawTooltipAvoidRect(int* rect, char* str)
-{
-
-}
-
-
 bool CoordInsideRect(int x, int y, int* rect)
 {
 	if(x < rect[0] || x > rect[0] + rect[2])
@@ -105,6 +61,24 @@ bool CoordInsideRect(int x, int y, int* rect)
 	if(y < rect[1] || y > rect[1] + rect[3])
 		return false;
 	return true;
+}
+
+
+void PositionRectInScreen(int* rect) 
+{
+	int screen_rect[4] = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
+	// check if top or bottom not inside screen
+	if(!CoordInsideRect(rect[0], rect[1], screen_rect) && !CoordInsideRect(rect[0] + rect[2], rect[1], screen_rect))
+		rect[1] = 0;
+	else if(!CoordInsideRect(rect[0], rect[1] + rect[3], screen_rect) && !CoordInsideRect(rect[0] + rect[2], rect[1] + rect[3], screen_rect))
+		rect[1] = SCREEN_HEIGHT - rect[3];
+
+	//check if left or right not inside screen
+	if(!CoordInsideRect(rect[0], rect[1], screen_rect) && !CoordInsideRect(rect[0], rect[1] + rect[3], screen_rect))
+		rect[0] = 0;
+	else if(!CoordInsideRect(rect[0] + rect[2], rect[1], screen_rect) && !CoordInsideRect(rect[0] + rect[2], rect[1] + rect[3], screen_rect))
+		rect[0] = SCREEN_WIDTH - rect[2];
 }
 
 DEVILUTION_END_NAMESPACE

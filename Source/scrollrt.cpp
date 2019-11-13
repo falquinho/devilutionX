@@ -1,5 +1,6 @@
 #include "diablo.h"
 #include "../SourceX/modern_interface/modern_control_panel.h"
+#include "../SourceX/modern_interface/modern_info_box.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -801,25 +802,24 @@ static void DrawGame(int x, int y)
 void DrawView(int StartX, int StartY)
 {
 	DrawGame(StartX, StartY);
-	// if (automapflag) {
-	// 	DrawAutomap();
-	// }
+	if (automapflag) {
+		DrawAutomap();
+	}
 	if (stextflag && !qtextflag)
 		DrawSText();
-	// if (invflag) {
-	// 	DrawInv();
-	// } else if (sbookflag) {
-	// 	DrawSpellBook();
-	// }
+	if (invflag) {
+		DrawInv();
+	} else if (sbookflag) {
+		DrawSpellBook();
+	}
 
 	DrawDurIcon();
 
-	// if (chrflag) {
-	// 	DrawChr();
-	// } else if (questlog) {
-	// 	DrawQuestLog();
-	// } else if (plr[myplr]._pStatPts != 0 && !spselflag) {
-	if (plr[myplr]._pStatPts != 0 && !spselflag) {
+	if (chrflag) {
+		DrawChr();
+	} else if (questlog) {
+		DrawQuestLog();
+	} else if (plr[myplr]._pStatPts != 0 && !spselflag) {
 		DrawLevelUpIcon();
 	}
 	if (uitemflag) {
@@ -858,29 +858,34 @@ int DrawControlPanel(BOOL ctrlPan, int hgt)
 {
 	int new_hgt = hgt;
 
-	if (ctrlPan) {
-		ClearCtrlPan();
-	}
-	if (drawhpflag) {
-		UpdateLifeFlask();
-	}
-	if (drawmanaflag) {
-		UpdateManaFlask();
-	}
-	if (drawbtnflag) {
-		DrawCtrlPan();
-	}
-	if (drawsbarflag) {
-		DrawInvBelt();
-	}
+	// if (ctrlPan) {
+	// 	ClearCtrlPan();
+	// }
+	// if (drawhpflag) {
+	// 	UpdateLifeFlask();
+	// }
+	// if (drawmanaflag) {
+	// 	UpdateManaFlask();
+	// }
+	// if (drawbtnflag) {
+	// 	DrawCtrlPan();
+	// }
+	// if (drawsbarflag) {
+	// 	DrawInvBelt();
+	// }
 	if (talkflag) {
 		DrawTalkPan();
 		new_hgt = SCREEN_HEIGHT;
 	}
 
+	DrawModernPanel();
+
 	DrawInfoBox();
-	DrawLifeFlask();
-	DrawManaFlask();
+
+	DrawModernInfoBox();
+
+	// DrawLifeFlask();
+	// DrawManaFlask();
 
 	return new_hgt;
 }
@@ -1129,14 +1134,10 @@ void DrawAndBlit()
 
 	drawpanflag = 0;
 
-	BOOL modern_ctrl_pan = TRUE;
 	lock_buf(0);
 	DrawView(ViewX, ViewY);
 
-	if(!modern_ctrl_pan)
-		hgt = DrawControlPanel(ctrlPan, hgt);
-	else
-		draw_modern_control_panel();
+	hgt = DrawControlPanel(ctrlPan, hgt);
 
 	scrollrt_draw_cursor_item();
 	unlock_buf(0);
