@@ -63,17 +63,15 @@ int meter_w = 23;
 void DrawLifeMeter()
 {
 	int curr_h = ((double)plr[myplr]._pHitPoints / (double)plr[myplr]._pMaxHP) * meter_h;
-	int left   = panel_left   + 34;
-	int bottom = panel_bottom - 6;
-	DrawRectangle(left, bottom, meter_w, curr_h, PAL8_RED + 6, false);
+	int rect[4] = {panel_x + 34, panel_y + 14 + meter_h - curr_h, meter_w, curr_h};
+	DrawRectangle(rect, PAL8_RED + 6, false);
 }
 
 void DrawManaMeter()
 {
 	int curr_h = ((double)plr[myplr]._pMana / (double)plr[myplr]._pMaxMana) * meter_h;
-	int left   = panel_left   + 329;
-	int bottom = panel_bottom - 6;
-	DrawRectangle(left, bottom, meter_w, curr_h, PAL8_BLUE + 6, false);
+	int rect[4] = {panel_x + 329, panel_y + 14 + meter_h - curr_h, meter_w, curr_h};
+	DrawRectangle(rect, PAL8_BLUE + 6, false);
 }
 
 

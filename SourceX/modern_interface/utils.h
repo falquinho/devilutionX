@@ -7,12 +7,10 @@
 DEVILUTION_BEGIN_NAMESPACE
 
 void SetPixel(int x, int y, BYTE color);
-void DrawRectangle(int left, int bottom, int width, int height, BYTE color, bool dither);
+void DrawRectangle(int rect[4], BYTE color, bool dither);
 void DrawChar(int x, int y, char c);
 void DrawString(int x, int y, char* str);
-void DrawTooltip(int* el_rect, char* str);
-void DrawTooltipAvoidRect(int* rect, char* str);
-bool CoordInsideRect(int x, int y, int* rect);
+bool IsCoordInsideRect(int x, int y, int* rect);
 
 DEVILUTION_END_NAMESPACE
 
