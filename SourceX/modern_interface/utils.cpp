@@ -54,13 +54,31 @@ void DrawString(int x, int y, char* str)
 }
 
 
-bool IsCoordInsideRect(int x, int y, int* rect)
+bool CoordInsideRect(int x, int y, int* rect)
 {
 	if(x < rect[0] || x > rect[0] + rect[2])
 		return false;
 	if(y < rect[1] || y > rect[1] + rect[3])
 		return false;
 	return true;
+}
+
+
+void PositionRectInScreen(int* rect) 
+{
+	int screen_rect[4] = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
+	// check if top or bottom not inside screen
+	if(!CoordInsideRect(rect[0], rect[1], screen_rect) && !CoordInsideRect(rect[0] + rect[2], rect[1], screen_rect))
+		rect[1] = 0;
+	else if(!CoordInsideRect(rect[0], rect[1] + rect[3], screen_rect) && !CoordInsideRect(rect[0] + rect[2], rect[1] + rect[3], screen_rect))
+		rect[1] = SCREEN_HEIGHT - rect[3];
+
+	//check if left or right not inside screen
+	if(!CoordInsideRect(rect[0], rect[1], screen_rect) && !CoordInsideRect(rect[0], rect[1] + rect[3], screen_rect))
+		rect[0] = 0;
+	else if(!CoordInsideRect(rect[0] + rect[2], rect[1], screen_rect) && !CoordInsideRect(rect[0] + rect[2], rect[1] + rect[3], screen_rect))
+		rect[0] = SCREEN_WIDTH - rect[2];
 }
 
 DEVILUTION_END_NAMESPACE

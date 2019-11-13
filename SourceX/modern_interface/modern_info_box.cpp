@@ -20,6 +20,7 @@ void DrawModernInfoBox()
     box_w += 4;
 
     int box_rect[4] = {MouseX, MouseY - box_h, box_w, box_h};
+    PositionRectInScreen(box_rect);
 
     DrawRectangle(box_rect, PAL16_GRAY + 15, true);
 

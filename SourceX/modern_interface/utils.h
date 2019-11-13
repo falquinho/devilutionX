@@ -10,7 +10,8 @@ void SetPixel(int x, int y, BYTE color);
 void DrawRectangle(int rect[4], BYTE color, bool dither);
 void DrawChar(int x, int y, char c);
 void DrawString(int x, int y, char* str);
-bool IsCoordInsideRect(int x, int y, int* rect);
+bool CoordInsideRect(int x, int y, int* rect);
+void PositionRectInScreen(int* rect);
 
 DEVILUTION_END_NAMESPACE
 
