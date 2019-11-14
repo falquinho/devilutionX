@@ -13,12 +13,12 @@ void DrawMonsterInfo()
     int str_box_w = strlen(infostr) * char_width;
     Rect bkg = {(SCREEN_WIDTH - str_box_w)/2, 4, str_box_w, char_height};
     DrawRectangle(bkg, PAL16_GRAY + 15, true);
-    DrawString((SCREEN_WIDTH - str_box_w)/2, 4, infostr);
+    DrawString((SCREEN_WIDTH - bkg.w)/2, 4, infostr);
 
     for(int i = 0; i < pnumlines; i++) {
         bkg.w = strlen(&panelstr[64 * i]) * char_width;
         bkg.y = 4 + char_height + (char_height * i);
-        bkg.x = (SCREEN_WIDTH - str_box_w)/2;
+        bkg.x = (SCREEN_WIDTH - bkg.w)/2;
         DrawRectangle(bkg, PAL16_GRAY + 15, true);
         DrawString(bkg.x, bkg.y, &panelstr[64 * i]);
     }
@@ -51,10 +51,12 @@ void DrawModernInfoBox()
 
     DrawRectangle(box_rect, PAL16_GRAY + 15, true);
 
-    DrawString(box_rect.x + 2, box_rect.y + 2, infostr);
+    int offset = (box_rect.w - strlen(infostr) * char_width)/2;
+    DrawString(box_rect.x + offset, box_rect.y + 2, infostr);
 
     for (i = 0; i < pnumlines; i++) {
-        DrawString(box_rect.x + 2, box_rect.y + 2 + ((i + 1) * char_height), &panelstr[64 * i]);
+        offset = (box_rect.w - strlen(&panelstr[64 * i]) * char_width)/2;
+        DrawString(box_rect.x + offset, box_rect.y + 2 + ((i + 1) * char_height), &panelstr[64 * i]);
     }
 }
 
