@@ -1,4 +1,5 @@
 #include "diablo.h"
+#include "../SourceX/modern_interface/modern_control_panel.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -274,11 +275,15 @@ void CheckCursMove()
 		cursmy = my;
 		return;
 	}
+	// Modern Panel
+	if (ModernPanelContainCurs())
+		return ModernPanelOnCursorIn();
+	
 	//allows clicking through the sides of the panel (it doesn't cover the whole screen on higher resolutions)
-	if (MouseY > PANEL_TOP && MouseX >= WIDTH_DIFF_2 && MouseX <= SCREEN_WIDTH - WIDTH_DIFF_2) {
-		CheckPanelInfo();
-		return;
-	}
+	// if (MouseY > PANEL_TOP && MouseX >= WIDTH_DIFF_2 && MouseX <= SCREEN_WIDTH - WIDTH_DIFF_2) {
+	// 	CheckPanelInfo();
+	// 	return;
+	// }
 	if (doomflag) {
 		return;
 	}
