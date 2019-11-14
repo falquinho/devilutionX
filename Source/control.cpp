@@ -1084,7 +1084,8 @@ void DrawInfoBox()
 {
 	int nGold;
 
-	DrawPanelBox(177, 62, 288, 60, 241, 558);
+	// DrawPanelBox(177, 62, 288, 60, 241, 558);
+
 	if (!panelflag && !trigflag && pcursinvitem == -1 && !spselflag) {
 		infostr[0] = '\0';
 		infoclr = COL_WHITE;
@@ -1140,8 +1141,8 @@ void DrawInfoBox()
 			AddPanelString(tempstr, TRUE);
 		}
 	}
-	if (infostr[0] || pnumlines)
-		control_draw_info_str();
+	// if (infostr[0] || pnumlines)
+	// 	control_draw_info_str();
 }
 
 void control_draw_info_str()
