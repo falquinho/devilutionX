@@ -1,5 +1,5 @@
 #include "utils.h"
-
+#include "modern_control_panel.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -20,13 +20,13 @@ void SetPixel(int sx, int sy, BYTE col)
 }
 
 
-void DrawRectangle(int rect[4], BYTE color, bool dither)
+void DrawRectangle(Rect rect, BYTE color, bool dither)
 {
-	for (int y = 0; y < rect[3]; y++) {
-		for(int x = 0; x < rect[2]; x++) {
+	for (int y = 0; y < rect.h; y++) {
+		for(int x = 0; x < rect.w; x++) {
 			if(dither && x%2 != y%2)
 				continue;
-			SetPixel(SCREEN_X + rect[0] + x, SCREEN_Y + rect[1] + y, color);
+			SetPixel(SCREEN_X + rect.x + x, SCREEN_Y + rect.y + y, color);
 		}
 	}
 }
@@ -54,31 +54,31 @@ void DrawString(int x, int y, char* str)
 }
 
 
-bool CoordInsideRect(int x, int y, int* rect)
+bool CoordInsideRect(int x, int y, Rect rect)
 {
-	if(x < rect[0] || x > rect[0] + rect[2])
+	if(x < rect.x || x > rect.x + rect.w)
 		return false;
-	if(y < rect[1] || y > rect[1] + rect[3])
+	if(y < rect.y || y > rect.y + rect.h)
 		return false;
 	return true;
 }
 
 
-void PositionRectInScreen(int* rect) 
+void PositionRectInScreen(Rect* rect) 
 {
-	int screen_rect[4] = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+	Rect screen_rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
 	// check if top or bottom not inside screen
-	if(!CoordInsideRect(rect[0], rect[1], screen_rect) && !CoordInsideRect(rect[0] + rect[2], rect[1], screen_rect))
-		rect[1] = 0;
-	else if(!CoordInsideRect(rect[0], rect[1] + rect[3], screen_rect) && !CoordInsideRect(rect[0] + rect[2], rect[1] + rect[3], screen_rect))
-		rect[1] = SCREEN_HEIGHT - rect[3];
+	if(!CoordInsideRect(rect->x, rect->y, screen_rect) && !CoordInsideRect(rect->x + rect->w, rect->y, screen_rect))
+		rect->y = 0;
+	else if(!CoordInsideRect(rect->x, rect->y + rect->h, screen_rect) && !CoordInsideRect(rect->x + rect->w, rect->y + rect->h, screen_rect))
+		rect->y = SCREEN_HEIGHT - rect->h;
 
 	//check if left or right not inside screen
-	if(!CoordInsideRect(rect[0], rect[1], screen_rect) && !CoordInsideRect(rect[0], rect[1] + rect[3], screen_rect))
-		rect[0] = 0;
-	else if(!CoordInsideRect(rect[0] + rect[2], rect[1], screen_rect) && !CoordInsideRect(rect[0] + rect[2], rect[1] + rect[3], screen_rect))
-		rect[0] = SCREEN_WIDTH - rect[2];
+	if(!CoordInsideRect(rect->x, rect->y, screen_rect) && !CoordInsideRect(rect->x, rect->y + rect->h, screen_rect))
+		rect->x = 0;
+	else if(!CoordInsideRect(rect->x + rect->w, rect->y, screen_rect) && !CoordInsideRect(rect->x + rect->w, rect->y + rect->h, screen_rect))
+		rect->x = SCREEN_WIDTH - rect->w;
 }
 
 DEVILUTION_END_NAMESPACE

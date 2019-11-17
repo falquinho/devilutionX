@@ -2,6 +2,7 @@
 #define __MODERNCONTROLPANEL_H__
 
 #include "../../SourceS/devilution.h"
+#include "utils.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -28,20 +29,25 @@ DEVILUTION_BEGIN_NAMESPACE
 #define PANEL_ELEMENT_SPELL_5 20
 #define PANEL_ELEMENT_SPELL_6 21
 #define PANEL_ELEMENT_NONE    22
+#define PANEL_ELEMENTS_NUM    23
 
 extern BYTE* ctrl_panel_cel;
 extern BYTE* ascii_charmap_cel;
 extern BYTE* spellicons_sm_cel;
 
-extern int panel_rect[4];
+extern Rect panel_rect;
 
-extern int panel_elements_rects[][4];
+extern Rect panel_elements_rects[PANEL_ELEMENTS_NUM];
 
 extern int quickspells[4];
 
 void LoadModernPanel();
 
 void DrawModernPanel();
+
+void ModernPanelOnCursorIn();
+
+bool ModernPanelContainCurs();
 
 DEVILUTION_END_NAMESPACE
 #endif //__MODERNCONTROLPANEL_H__s
