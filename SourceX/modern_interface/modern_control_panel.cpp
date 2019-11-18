@@ -78,9 +78,8 @@ void DrawItemBelt()
 	int hor_space   = 29;
 	
 	for (int i = 0; i < MAXBELTITEMS; i++) {
-		if (plr[myplr].SpdList[i]._itype == ITYPE_NONE) {
+		if (plr[myplr].SpdList[i]._itype == ITYPE_NONE)
 			continue;
-		}
 
 		int frame = plr[myplr].SpdList[i]._iCurs + CURSOR_FIRSTITEM;
 
@@ -128,8 +127,39 @@ char btns_labels[][64] = {
 };
 void OnPanelButtonHovered(int btn)
 {
-	strcpy(infostr, "testetesteteste");
+	strcpy(infostr, btns_labels[btn]);
 	pnumlines = 0;
+}
+
+
+void OnItemBeltHovered(int index)
+{
+	ItemStruct item = plr[myplr].SpdList[index];
+	if(item._itype == ITYPE_NONE) {
+		infostr[0] = '\0';
+		panelflag = false;
+		return;
+	}
+	strcpy(infostr, item._iName);
+		if (item._iIdentified) {
+			strcpy(infostr, item._iIName);
+			PrintItemDetails(&item);
+		} else {
+			PrintItemDur(&item);
+		}
+}
+
+
+void OnLifeOrManaBarHovered(int meter) {
+	if(meter == PANEL_ELEMENT_LIFEBAR) 
+		sprintf(infostr, "%d/%d", plr[myplr]._pHitPoints >> 6, plr[myplr]._pMaxHP >> 6);
+	else
+		sprintf(infostr, "%d/%d", plr[myplr]._pMana >> 6, plr[myplr]._pMaxMana >> 6);
+}
+
+
+void OnSpellSlotHovered(int slot) {
+	sprintf(infostr, "Speel #%d hovered", slot);
 }
 
 
@@ -140,11 +170,21 @@ void ModernPanelOnCursorIn()
 		if(CoordInsideRect(MouseX, MouseY, panel_elements_rects[i]))
 			break;
 	}
-	if(i == PANEL_ELEMENT_NONE)
+	if(i == PANEL_ELEMENT_NONE) {
+		panelflag = false;
+		infostr[0] = '\0';
 		return;
+	}
 	
+	panelflag = true;
 	if(i <= PANEL_ELEMENT_BTN_MNU) 
 		return OnPanelButtonHovered(i);
+	else if(i >= PANEL_ELEMENT_BELT_1 && i <= PANEL_ELEMENT_BELT_8)
+		return OnItemBeltHovered(i - 8);
+	else if(i == PANEL_ELEMENT_MANABAR || i == PANEL_ELEMENT_LIFEBAR)
+		return OnLifeOrManaBarHovered(i);
+	else if(i >= PANEL_ELEMENT_SPELL_1 && i <= PANEL_ELEMENT_SPELL_6)
+		return OnSpellSlotHovered(i - PANEL_ELEMENT_SPELL_1);
 }
 
 
