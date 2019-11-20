@@ -49,5 +49,7 @@ void ModernPanelOnCursorIn();
 
 bool ModernPanelContainCurs();
 
+void ModernPanelOnCharPress(char c);
+
 DEVILUTION_END_NAMESPACE
 #endif //__MODERNCONTROLPANEL_H__s

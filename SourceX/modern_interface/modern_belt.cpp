@@ -69,4 +69,20 @@ void OnCursorOverModernBelt()
         PrintItemDur(&item);
 }
 
+
+void UseFirstPotion(bool life_pot)
+{
+    int id_potion = life_pot? IMISC_FULLHEAL : IMISC_MANA;
+    int i;
+    for(i = 0; i < MAXBELTITEMS; i++) {
+        ItemStruct item = plr[myplr].SpdList[i];
+        if(item._itype != ITYPE_NONE && (item._iMiscId == id_potion || item._iMiscId == (id_potion + 1)))
+            break;
+    }
+    if(i >= MAXBELTITEMS)
+        return;
+
+    UseInvItem(myplr, 47 + i);
+}
+
 DEVILUTION_END_NAMESPACE

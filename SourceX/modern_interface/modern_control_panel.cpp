@@ -145,7 +145,7 @@ void ModernPanelOnCursorIn()
 
 	else if(i == PANEL_ELEMENT_MANABAR || i == PANEL_ELEMENT_LIFEBAR)
 		return OnLifeOrManaBarHovered(i);
-		
+
 	else if(i >= PANEL_ELEMENT_SPELL_1 && i <= PANEL_ELEMENT_SPELL_6)
 		return OnSpellSlotHovered(i - PANEL_ELEMENT_SPELL_1);
 }
@@ -156,5 +156,19 @@ bool ModernPanelContainCurs()
 	return CoordInsideRect(MouseX, MouseY, panel_rect);
 }
 
+
+void ModernPanelOnCharPress(char c)
+{
+	switch(c) {
+		case 'f':
+		case 'F':
+			UseFirstPotion(true);
+			break;
+		case 'g':
+		case 'G':
+			UseFirstPotion(false);
+			break;
+	}
+}
 
 DEVILUTION_END_NAMESPACE
