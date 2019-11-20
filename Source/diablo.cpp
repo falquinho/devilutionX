@@ -473,6 +473,22 @@ BOOL PressEscKey()
 		spselflag = 0;
 		rv = TRUE;
 	}
+	if(invflag) {
+		invflag = 0;
+		rv = TRUE;
+	}
+	if(sbookflag) {
+		sbookflag = 0;
+		rv = TRUE;
+	}
+	if(questlog) {
+		questlog = 0;
+		rv = TRUE;
+	}
+	if(chrflag) {
+		chrflag = 0;
+		rv = TRUE;
+	}
 
 	return rv;
 }
