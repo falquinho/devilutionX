@@ -1,5 +1,6 @@
 #include "modern_control_panel.h"
 #include "utils.h"
+#include "modern_belt.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -70,29 +71,6 @@ void DrawManaMeter()
 }
 
 
-void DrawItemBelt()
-{
-	int left   = panel_left + 77;
-	int bottom = panel_bottom - 42;
-	int frame_width = 28;
-	int hor_space   = 29;
-	
-	for (int i = 0; i < MAXBELTITEMS; i++) {
-		if (plr[myplr].SpdList[i]._itype == ITYPE_NONE)
-			continue;
-
-		int frame = plr[myplr].SpdList[i]._iCurs + CURSOR_FIRSTITEM;
-
-		if (plr[myplr].SpdList[i]._iStatFlag)
-			CelClippedDraw(left + (hor_space * i), bottom, pCursCels, frame, frame_width);
-		else
-			CelDrawLightRed(left + (hor_space * i), bottom, pCursCels, frame, frame_width, 0, 8, 1);
-		
-		DrawChar(left - SCREEN_X + 20 + (i*hor_space), bottom - SCREEN_Y - 12, i + 49);
-	}
-}
-
-
 // labels to draw on spellbar
 char hotkeys[6][4] = {
 	"Q", "W", "E", "R", "T", "RMB"
@@ -113,7 +91,7 @@ void DrawModernPanel()
 	DrawLifeMeter();
 	DrawManaMeter();
 	DrawSpellBar();
-	DrawItemBelt();
+	DrawModernBelt();
 }
 
 
@@ -129,24 +107,6 @@ void OnPanelButtonHovered(int btn)
 {
 	strcpy(infostr, btns_labels[btn]);
 	pnumlines = 0;
-}
-
-
-void OnItemBeltHovered(int index)
-{
-	ItemStruct item = plr[myplr].SpdList[index];
-	if(item._itype == ITYPE_NONE) {
-		infostr[0] = '\0';
-		panelflag = false;
-		return;
-	}
-	strcpy(infostr, item._iName);
-		if (item._iIdentified) {
-			strcpy(infostr, item._iIName);
-			PrintItemDetails(&item);
-		} else {
-			PrintItemDur(&item);
-		}
 }
 
 
@@ -179,10 +139,13 @@ void ModernPanelOnCursorIn()
 	panelflag = true;
 	if(i <= PANEL_ELEMENT_BTN_MNU) 
 		return OnPanelButtonHovered(i);
-	else if(i >= PANEL_ELEMENT_BELT_1 && i <= PANEL_ELEMENT_BELT_8)
-		return OnItemBeltHovered(i - 8);
+
+	else if(CheckCursorOverModernBelt())
+		return OnCursorOverModernBelt();
+
 	else if(i == PANEL_ELEMENT_MANABAR || i == PANEL_ELEMENT_LIFEBAR)
 		return OnLifeOrManaBarHovered(i);
+		
 	else if(i >= PANEL_ELEMENT_SPELL_1 && i <= PANEL_ELEMENT_SPELL_6)
 		return OnSpellSlotHovered(i - PANEL_ELEMENT_SPELL_1);
 }
