@@ -7,6 +7,8 @@ bool CheckCursorOverButtons();
 
 void OnCursorOverButtons();
 
+void OnLeftMouseClickPanelButtons();
+
 DEVILUTION_END_NAMESPACE
 
 #endif

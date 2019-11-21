@@ -669,7 +669,11 @@ BOOL LeftMouseDown(int wParam)
 			} else {
 				if (!talkflag && !dropGoldFlag && !gmenu_exception())
 					CheckInvScrn();
-				DoPanBtn();
+
+				// DoPanBtn();
+				if(ModernPanelContainCurs())
+					ModerPanelOnMouseBtnDown('l');
+
 				if (pcurs > CURSOR_HAND && pcurs < CURSOR_FIRSTITEM)
 					SetCursor_(CURSOR_HAND);
 			}

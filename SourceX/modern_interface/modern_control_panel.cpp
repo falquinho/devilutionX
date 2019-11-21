@@ -79,4 +79,15 @@ void ModernPanelOnCharPress(char c)
 	}
 }
 
+
+void ModerPanelOnMouseBtnDown(char btn)
+{
+	if( btn == 'l') {
+		if(CheckCursorOverButtons())
+			return OnLeftMouseClickPanelButtons();
+		else if(CheckCursorOverModernBelt())
+			return OnLeftClickModernBelt();
+	}
+}
+
 DEVILUTION_END_NAMESPACE

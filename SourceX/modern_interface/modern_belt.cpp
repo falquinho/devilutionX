@@ -48,10 +48,15 @@ bool CheckCursorOverModernBelt()
 }
 
 
+int GetBeltIndex(int offset)
+{
+    static int slot_width = 29;
+    return offset/slot_width;
+}
+
 void OnCursorOverModernBelt()
 {
-    static const int slot_width = 29;
-    int index = (MouseX - belt_rect.x)/slot_width;
+    int index = GetBeltIndex(MouseX - belt_rect.x);
 
     ItemStruct item = plr[myplr].SpdList[index];
 
@@ -81,6 +86,27 @@ void UseFirstPotion(bool life_pot)
         return;
 
     UseInvItem(myplr, 47 + i);
+}
+
+
+void OnLeftClickModernBelt()
+{
+    int index = GetBeltIndex(MouseX - belt_rect.x);
+
+    if(plr[myplr].SpdList[index]._itype == ITYPE_NONE && plr[myplr].HoldItem._itype == ITYPE_NONE)
+        return;
+
+    ItemStruct temp = plr[myplr].SpdList[index];
+    plr[myplr].SpdList[index] = plr[myplr].HoldItem;
+    plr[myplr].HoldItem = temp;
+
+    if(plr[myplr].HoldItem._itype == ITYPE_NONE) {
+        SetCursor_(CURSOR_FIRSTITEM);
+        return;
+    }
+    
+    PlaySFX(IS_IGRAB);
+    SetCursor_(plr[myplr].HoldItem._iCurs + CURSOR_FIRSTITEM);
 }
 
 DEVILUTION_END_NAMESPACE

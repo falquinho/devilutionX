@@ -16,6 +16,8 @@ void OnCursorOverModernBelt();
 
 void UseFirstPotion(bool is_life_pot);
 
+void OnLeftClickModernBelt();
+
 DEVILUTION_END_NAMESPACE
 
 #endif

@@ -35,4 +35,31 @@ void OnCursorOverButtons()
     strcpy(infostr, labels[col * 3 + row]);
 }
 
+
+void OnLeftMouseClickPanelButtons()
+{
+    int col = CoordInsideRect(MouseX, MouseY, left_btns_rect)? 0 : 1;
+    int row = (MouseY - left_btns_rect.y)/17;
+    int btn_id = col*3 + row;
+
+    if(btn_id == 0) {
+        questlog = 0;
+        chrflag  = chrflag? 0 : 1;
+    }
+    else if(btn_id == 1) {
+        chrflag  = 0;
+        questlog = questlog? 0 : 1;
+    }
+    else if(btn_id == 2) 
+        automapflag = automapflag? 0 : 1;
+    else if(btn_id == 3) {
+        sbookflag = 0;
+        invflag   = invflag? 0 : 1;
+    }
+    else if(btn_id == 4) {
+        invflag   = 0;
+        sbookflag = sbookflag? 0 : 1;
+    }
+}
+
 DEVILUTION_END_NAMESPACE 
