@@ -1,6 +1,8 @@
 #include "modern_control_panel.h"
 #include "utils.h"
 #include "modern_belt.h"
+#include "modern_spellbar.h"
+#include "modern_meters.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -20,27 +22,6 @@ Rect panel_elements_rects[PANEL_ELEMENTS_NUM] = {
     {panel_rect.x + 361, panel_rect.y + 14, 16, 16}, // inventory button
     {panel_rect.x + 361, panel_rect.y + 31, 16, 16}, // spellbook button
     {panel_rect.x + 361, panel_rect.y + 48, 16, 16}, // menu button
-    {panel_rect.x +  34, panel_rect.y + 14, 23, 51}, // life meter  
-    {panel_rect.x + 329, panel_rect.y + 14, 23, 51}, // mana meter
-    {panel_rect.x + 78 + (28*0), panel_rect.y + 3, 28, 26}, // belt item 1
-    {panel_rect.x + 78 + (28*1), panel_rect.y + 3, 28, 26}, // belt item 2 
-    {panel_rect.x + 78 + (28*2), panel_rect.y + 3, 28, 26}, // belt item 3 
-    {panel_rect.x + 78 + (28*3), panel_rect.y + 3, 28, 26}, // belt item 4 
-    {panel_rect.x + 78 + (28*4), panel_rect.y + 3, 28, 26}, // belt item 5 
-    {panel_rect.x + 78 + (28*5), panel_rect.y + 3, 28, 26}, // belt item 6 
-    {panel_rect.x + 78 + (28*6), panel_rect.y + 3, 28, 26}, // belt item 7 
-    {panel_rect.x + 78 + (28*7), panel_rect.y + 3, 28, 26}, // belt item 8
-    {panel_rect.x + 71 + (42 * 0), panel_rect.y + 35, 34, 34}, // spell 1
-    {panel_rect.x + 71 + (42 * 1), panel_rect.y + 35, 34, 34}, // spell 2
-    {panel_rect.x + 71 + (42 * 2), panel_rect.y + 35, 34, 34}, // spell 3
-    {panel_rect.x + 71 + (42 * 3), panel_rect.y + 35, 34, 34}, // spell 4
-    {panel_rect.x + 71 + (42 * 4), panel_rect.y + 35, 34, 34}, // spell 5
-    {panel_rect.x + 71 + (42 * 5), panel_rect.y + 35, 34, 34}, // spell 6
-};
-
-
-int quickspells[4] = {
-	SPL_NULL, SPL_NULL, SPL_NULL, SPL_NULL
 };
 
 
@@ -56,41 +37,11 @@ void LoadModernPanel()
 int meter_h = 51;
 int meter_w = 23;
 
-void DrawLifeMeter()
-{
-	int curr_h = ((double)plr[myplr]._pHitPoints / (double)plr[myplr]._pMaxHP) * meter_h;
-	Rect rect = {panel_rect.x + 34, panel_rect.y + 14 + meter_h - curr_h, meter_w, curr_h};
-	DrawRectangle(rect, PAL8_RED + 6, false);
-}
-
-void DrawManaMeter()
-{
-	int curr_h = ((double)plr[myplr]._pMana / (double)plr[myplr]._pMaxMana) * meter_h;
-	Rect rect = {panel_rect.x + 329, panel_rect.y + 14 + meter_h - curr_h, meter_w, curr_h};
-	DrawRectangle(rect, PAL8_BLUE + 6, false);
-}
-
-
-// labels to draw on spellbar
-char hotkeys[6][4] = {
-	"Q", "W", "E", "R", "T", "RMB"
-};
-void DrawSpellBar()
-{
-	int x = panel_left + 84 - SCREEN_X;
-	int y = panel_bottom - 8 - SCREEN_Y;
-	for(int i = 0; i < 6; i++, x += 42) {
-		DrawString(x - (i >= 5? 6: 0), y, hotkeys[i]);
-	}
-}
-
-
 void DrawModernPanel()
 {
 	CelDraw( panel_left, panel_bottom, ctrl_panel_cel, 1, panel_rect.w);
-	DrawLifeMeter();
-	DrawManaMeter();
-	DrawSpellBar();
+	DrawModernMeters();
+	DrawModernSpellbar();
 	DrawModernBelt();
 }
 
@@ -110,44 +61,26 @@ void OnPanelButtonHovered(int btn)
 }
 
 
-void OnLifeOrManaBarHovered(int meter) {
-	if(meter == PANEL_ELEMENT_LIFEBAR) 
-		sprintf(infostr, "%d/%d", plr[myplr]._pHitPoints >> 6, plr[myplr]._pMaxHP >> 6);
-	else
-		sprintf(infostr, "%d/%d", plr[myplr]._pMana >> 6, plr[myplr]._pMaxMana >> 6);
-}
-
-
-void OnSpellSlotHovered(int slot) {
-	sprintf(infostr, "Speel #%d hovered", slot);
-}
-
-
 void ModernPanelOnCursorIn()
 {
-	int i = 0;
-	for(; i < PANEL_ELEMENTS_NUM; i++) {
-		if(CoordInsideRect(MouseX, MouseY, panel_elements_rects[i]))
-			break;
-	}
-	if(i == PANEL_ELEMENT_NONE) {
-		panelflag = false;
-		infostr[0] = '\0';
-		return;
-	}
-	
 	panelflag = true;
-	if(i <= PANEL_ELEMENT_BTN_MNU) 
-		return OnPanelButtonHovered(i);
 
-	else if(CheckCursorOverModernBelt())
+	// if(i <= PANEL_ELEMENT_BTN_MNU) 
+	// 	return OnPanelButtonHovered(i);
+
+	if(CheckCursorOverModernBelt())
 		return OnCursorOverModernBelt();
 
-	else if(i == PANEL_ELEMENT_MANABAR || i == PANEL_ELEMENT_LIFEBAR)
-		return OnLifeOrManaBarHovered(i);
+	else if(CheckCursorOverModernSpellbar())
+		return OnCursorOverModernSpellbar();
+	
+	else if(CheckCursorOverModernMeters())
+		return OnCursorOverModernMeters();
+	
+	infostr[0] = '\0';
+	pnumlines  = 0;
+	panelflag  = false;
 
-	else if(i >= PANEL_ELEMENT_SPELL_1 && i <= PANEL_ELEMENT_SPELL_6)
-		return OnSpellSlotHovered(i - PANEL_ELEMENT_SPELL_1);
 }
 
 

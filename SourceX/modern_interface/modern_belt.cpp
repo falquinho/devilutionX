@@ -62,11 +62,9 @@ void OnCursorOverModernBelt()
 	}
 
 	strcpy(infostr, item._iName);
+    pnumlines = 0;
 
-    if (item._iIdentified)
-        PrintItemDetails(&item);
-    else
-        PrintItemDur(&item);
+    PrintItemMisc(&item);
 }
 
 

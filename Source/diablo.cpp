@@ -1089,15 +1089,15 @@ void PressChar(int vkey)
 		return;
 	}
 
+	ModernPanelOnCharPress(vkey);
+
 	switch (vkey) {
 	case 'G':
 	case 'g':
-		ModernPanelOnCharPress(vkey);
 		// DecreaseGamma();
 		return;
 	case 'F':
 	case 'f':
-		ModernPanelOnCharPress(vkey);
 		// IncreaseGamma();
 		return;
 	case 'I':
