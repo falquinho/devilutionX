@@ -93,20 +93,13 @@ void OnLeftClickModernBelt()
 {
     int index = GetBeltIndex(MouseX - belt_rect.x);
 
-    if(plr[myplr].SpdList[index]._itype == ITYPE_NONE && plr[myplr].HoldItem._itype == ITYPE_NONE)
-        return;
+    SwapItem(&plr[myplr].SpdList[index], &plr[myplr].HoldItem);
 
-    ItemStruct temp = plr[myplr].SpdList[index];
-    plr[myplr].SpdList[index] = plr[myplr].HoldItem;
-    plr[myplr].HoldItem = temp;
+    int curs_gfx = plr[myplr].HoldItem._itype == ITYPE_NONE? CURSOR_HAND : plr[myplr].HoldItem._iCurs + CURSOR_FIRSTITEM;
 
-    if(plr[myplr].HoldItem._itype == ITYPE_NONE) {
-        SetCursor_(CURSOR_FIRSTITEM);
-        return;
-    }
-    
     PlaySFX(IS_IGRAB);
-    SetCursor_(plr[myplr].HoldItem._iCurs + CURSOR_FIRSTITEM);
+
+    SetCursor_(curs_gfx);
 }
 
 DEVILUTION_END_NAMESPACE
