@@ -473,6 +473,22 @@ BOOL PressEscKey()
 		spselflag = 0;
 		rv = TRUE;
 	}
+	if(invflag) {
+		invflag = 0;
+		rv = TRUE;
+	}
+	if(sbookflag) {
+		sbookflag = 0;
+		rv = TRUE;
+	}
+	if(questlog) {
+		questlog = 0;
+		rv = TRUE;
+	}
+	if(chrflag) {
+		chrflag = 0;
+		rv = TRUE;
+	}
 
 	return rv;
 }
@@ -653,7 +669,11 @@ BOOL LeftMouseDown(int wParam)
 			} else {
 				if (!talkflag && !dropGoldFlag && !gmenu_exception())
 					CheckInvScrn();
-				DoPanBtn();
+
+				// DoPanBtn();
+				if(ModernPanelContainCurs())
+					ModerPanelOnMouseBtnDown('l');
+
 				if (pcurs > CURSOR_HAND && pcurs < CURSOR_FIRSTITEM)
 					SetCursor_(CURSOR_HAND);
 			}
@@ -1073,14 +1093,16 @@ void PressChar(int vkey)
 		return;
 	}
 
+	ModernPanelOnCharPress(vkey);
+
 	switch (vkey) {
 	case 'G':
 	case 'g':
-		DecreaseGamma();
+		// DecreaseGamma();
 		return;
 	case 'F':
 	case 'f':
-		IncreaseGamma();
+		// IncreaseGamma();
 		return;
 	case 'I':
 	case 'i':

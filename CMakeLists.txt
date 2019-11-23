@@ -213,8 +213,12 @@ set(devilutionx_SRCS
   SourceX/miniwin/rand.cpp
   SourceX/miniwin/thread.cpp
   SourceX/miniwin/dsound.cpp
+  SourceX/modern_interface/modern_belt.cpp
   SourceX/modern_interface/modern_control_panel.cpp
   SourceX/modern_interface/modern_info_box.cpp
+  SourceX/modern_interface/modern_meters.cpp
+  SourceX/modern_interface/modern_panel_buttons.cpp
+  SourceX/modern_interface/modern_spellbar.cpp
   SourceX/modern_interface/utils.cpp
   SourceX/sound.cpp
   SourceX/storm/storm.cpp
