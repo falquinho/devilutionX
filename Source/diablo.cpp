@@ -36,6 +36,8 @@ int sgnTimeoutCurs;
 char sgbMouseDown;
 int color_cycle_timer;
 
+int locked_monster = -1;
+
 /* rdata */
 
 BOOL fullscreen = TRUE;
@@ -566,6 +568,7 @@ LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (sgbMouseDown == 0) {
 			sgbMouseDown = 1;
 			track_repeat_walk(LeftMouseDown(wParam));
+			locked_monster = pcursmonst;
 		}
 		return 0;
 	case WM_LBUTTONUP:
@@ -575,6 +578,7 @@ LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			sgbMouseDown = 0;
 			LeftMouseUp();
 			track_repeat_walk(FALSE);
+			locked_monster = -1;
 		}
 		return 0;
 	case WM_RBUTTONDOWN:
@@ -679,7 +683,6 @@ BOOL LeftMouseDown(int wParam)
 			}
 		}
 	}
-
 	return FALSE;
 }
 
@@ -1711,6 +1714,16 @@ void game_logic()
 		ProcessItems();
 		ProcessLightList();
 		ProcessVisionList();
+
+		if(locked_monster >= 0){
+			pcursmonst = locked_monster;
+			LeftMouseCmd(FALSE);
+
+			if(monster[locked_monster]._mhitpoints >> 6 <= 0) {
+				locked_monster = -1;
+				pcursmonst = -1;
+			}
+		}
 	} else {
 		ProcessTowners();
 		ProcessItems();
