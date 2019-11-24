@@ -644,7 +644,8 @@ BOOL LeftMouseDown(int wParam)
 			} else if (stextflag) {
 				CheckStoreBtn();
 				//allows clicking through the sides of the panel (it doesn't cover the whole screen on higher resolutions)
-			} else if (MouseY < PANEL_TOP || MouseX < WIDTH_DIFF_2 || MouseX > SCREEN_WIDTH - WIDTH_DIFF_2) {
+			// } else if (MouseY < PANEL_TOP || MouseX < WIDTH_DIFF_2 || MouseX > SCREEN_WIDTH - WIDTH_DIFF_2) {
+			} else if (!ModernPanelContainCurs()) {
 				if (!gmenu_exception() && !TryIconCurs()) {
 					if (questlog && MouseX > 32 && MouseX < 288 && MouseY > 32 && MouseY < 308) {
 						QuestlogESC();
@@ -675,8 +676,7 @@ BOOL LeftMouseDown(int wParam)
 					CheckInvScrn();
 
 				// DoPanBtn();
-				if(ModernPanelContainCurs())
-					ModerPanelOnMouseBtnDown('l');
+				ModerPanelOnMouseBtnDown('l');
 
 				if (pcurs > CURSOR_HAND && pcurs < CURSOR_FIRSTITEM)
 					SetCursor_(CURSOR_HAND);
