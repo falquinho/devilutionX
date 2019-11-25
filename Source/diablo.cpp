@@ -655,7 +655,7 @@ BOOL LeftMouseDown(int wParam)
 						CheckChrBtns();
 					} else if (invflag && MouseX > SCREEN_WIDTH - 320 && MouseY < 352) {
 						if (!dropGoldFlag)
-							CheckInvItem();
+							CheckInvItem(wParam == MK_SHIFT + MK_LBUTTON);
 					} else if (sbookflag && MouseX > SCREEN_WIDTH - 320 && MouseY < 352) {
 						CheckSBook();
 					} else if (pcurs >= CURSOR_FIRSTITEM) {

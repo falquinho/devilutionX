@@ -662,6 +662,7 @@ void CheckInvPaste(int pnum, int mx, int my)
 	sx = icursW28;
 	sy = icursH28;
 	done = FALSE;
+
 	for (r = 0; r < sizeof(InvRect) / sizeof(InvRect[0]) && !done; r++) {
 		if (i >= InvRect[r].X && i < InvRect[r].X + INV_SLOT_SIZE_PX) {
 			if (j >= InvRect[r].Y - INV_SLOT_SIZE_PX - 1 && j < InvRect[r].Y) {
@@ -1315,8 +1316,79 @@ void RemoveSpdBarItem(int pnum, int iv)
 	drawpanflag = 255;
 }
 
-void CheckInvItem()
+void QuickPutItemOnBelt()
 {
+	if(
+		plr[myplr].HoldItem._iMiscId != IMISC_HEAL      &&
+		plr[myplr].HoldItem._iMiscId != IMISC_FULLHEAL  &&
+		plr[myplr].HoldItem._iMiscId != IMISC_MANA      &&
+		plr[myplr].HoldItem._iMiscId != IMISC_FULLMANA  &&
+		plr[myplr].HoldItem._iMiscId != IMISC_REJUV     &&
+		plr[myplr].HoldItem._iMiscId != IMISC_FULLREJUV &&
+		plr[myplr].HoldItem._iMiscId != IMISC_SCROLL    &&
+		plr[myplr].HoldItem._iMiscId != IMISC_SCROLLT
+	)
+		return;
+
+	int belt_index;
+	for(belt_index = 0; belt_index < MAXBELTITEMS; belt_index++) {
+		if(plr[myplr].SpdList[belt_index]._itype == ITYPE_NONE)
+			break;
+	}
+
+	if(belt_index >= MAXBELTITEMS)
+		return;
+
+	CheckInvPaste(myplr, 206 + WIDTH_DIFF_2 + (29 * belt_index), 385 + HEIGHT_DIFF - INV_SLOT_SIZE_PX);
+}
+
+void QuickSetItem()
+{
+	int og_mousex = MouseX;
+	int og_mousey = MouseY;
+
+	CheckInvCut(myplr, og_mousex, og_mousey);
+
+	if (pcurs < CURSOR_FIRSTITEM)
+		return;
+
+	switch(plr[myplr].HoldItem._iLoc)
+	{
+		case ILOC_HELM:
+			break;
+		case ILOC_RING:
+			break;
+		case ILOC_AMULET:
+			break;
+		case ILOC_ONEHAND:
+			CheckInvPaste(myplr, 338+WIDTH_DIFF, 105);
+			break;
+		case ILOC_ARMOR:
+			break;
+		case ILOC_BELT:
+			break;
+		case ILOC_TWOHAND:
+			CheckInvPaste(myplr, 338+WIDTH_DIFF, 105);
+			break;
+		case ILOC_UNEQUIPABLE:
+			QuickPutItemOnBelt();
+			break;
+		default:
+			CheckInvPaste(myplr, og_mousex, og_mousey);
+			return;
+	}
+
+	if (pcurs < CURSOR_FIRSTITEM)
+		return;
+
+	CheckInvPaste(myplr, og_mousex, og_mousey);
+}
+
+void CheckInvItem(bool modkey_shift)
+{
+	if(modkey_shift && pcurs < CURSOR_FIRSTITEM)
+		return QuickSetItem();
+
 	if (pcurs >= CURSOR_FIRSTITEM) {
 		CheckInvPaste(myplr, MouseX, MouseY);
 	} else {
@@ -1331,7 +1403,7 @@ void CheckInvScrn()
 {
 	if (MouseX > 190 + WIDTH_DIFF_2 && MouseX < 437 + WIDTH_DIFF_2
 	    && MouseY > PANEL_TOP && MouseY < 385 + HEIGHT_DIFF) { // TODO: check if PANEL_TOP shouldn't be replaced by 356 + HEIGHT_DIFF like in CheckPanelInfo() / create belt position enums
-		CheckInvItem();
+		CheckInvItem(false);
 	}
 }
 
