@@ -1355,15 +1355,19 @@ void QuickSetItem()
 	switch(plr[myplr].HoldItem._iLoc)
 	{
 		case ILOC_HELM:
+			CheckInvPaste(myplr, 453+WIDTH_DIFF, 30);
 			break;
 		case ILOC_RING:
+			CheckInvPaste(myplr, 366+WIDTH_DIFF, 204);
 			break;
 		case ILOC_AMULET:
+			CheckInvPaste(myplr, 525+WIDTH_DIFF, 58);
 			break;
 		case ILOC_ONEHAND:
 			CheckInvPaste(myplr, 338+WIDTH_DIFF, 105);
 			break;
 		case ILOC_ARMOR:
+			CheckInvPaste(myplr, 453+WIDTH_DIFF, 103);
 			break;
 		case ILOC_BELT:
 			break;
