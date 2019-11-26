@@ -1,4 +1,5 @@
 #include "diablo.h"
+#include "../SourceX/modern_interface/modern_info_box.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -1982,6 +1983,9 @@ char CheckInvHLight()
 	pi = NULL;
 	p = &plr[myplr];
 	ClearPanel();
+
+	ClearComparisonInfo();
+	
 	if (r >= 0 && r <= 3) {
 		rv = INVLOC_HEAD;
 		pi = &p->InvBody[rv];
@@ -2015,6 +2019,9 @@ char CheckInvHLight()
 		ii = r - 1;
 		rv = ii + 7;
 		pi = &p->InvList[ii];
+
+		SetCompareEquipmentInfo(*pi);
+
 	} else if (r >= 65) {
 		r -= 65;
 		drawsbarflag = TRUE;
