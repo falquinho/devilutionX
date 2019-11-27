@@ -4,6 +4,7 @@
 #include "modern_spellbar.h"
 #include "modern_meters.h"
 #include "modern_panel_buttons.h"
+#include "modern_info_box.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 

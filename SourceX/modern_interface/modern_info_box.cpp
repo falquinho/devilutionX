@@ -98,7 +98,9 @@ void DrawModernInfoBox()
 
 void ClearComparisonInfo()
 {
-    compare_info[0][0] = '\0';
+    for(int i = 0; i < 4; i++) {
+        compare_info[i][0] = '\0';
+    }
     compare_loc = NUM_INVLOC;
 }
 

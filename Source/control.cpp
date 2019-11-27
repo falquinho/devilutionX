@@ -1,4 +1,5 @@
 #include "diablo.h"
+#include "../SourceX/modern_interface/modern_info_box.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -964,8 +965,13 @@ void CheckPanelInfo()
 			}
 		}
 	}
+
+	ClearComparisonInfo();
+
 	if (MouseX > 190 + WIDTH_DIFF_2 && MouseX < 437 + WIDTH_DIFF_2 && MouseY > 356 + HEIGHT_DIFF && MouseY < 385 + HEIGHT_DIFF) // TODO: create belt enums
 		pcursinvitem = CheckInvHLight();
+	else
+		ClearComparisonInfo();
 }
 
 void CheckBtnUp()

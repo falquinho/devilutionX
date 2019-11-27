@@ -1389,9 +1389,10 @@ void QuickSetItem()
 	CheckInvPaste(myplr, og_mousex, og_mousey);
 }
 
-void CheckInvItem(bool modkey_shift)
+void CheckInvItem()
 {
-	if(modkey_shift && pcurs < CURSOR_FIRSTITEM)
+	int shift_state = GetAsyncKeyState(DVL_VK_SHIFT);
+	if(shift_state && pcurs < CURSOR_FIRSTITEM)
 		return QuickSetItem();
 
 	if (pcurs >= CURSOR_FIRSTITEM) {
@@ -1408,7 +1409,7 @@ void CheckInvScrn()
 {
 	if (MouseX > 190 + WIDTH_DIFF_2 && MouseX < 437 + WIDTH_DIFF_2
 	    && MouseY > PANEL_TOP && MouseY < 385 + HEIGHT_DIFF) { // TODO: check if PANEL_TOP shouldn't be replaced by 356 + HEIGHT_DIFF like in CheckPanelInfo() / create belt position enums
-		CheckInvItem(false);
+		CheckInvItem();
 	}
 }
 
@@ -1984,8 +1985,6 @@ char CheckInvHLight()
 	p = &plr[myplr];
 	ClearPanel();
 
-	ClearComparisonInfo();
-	
 	if (r >= 0 && r <= 3) {
 		rv = INVLOC_HEAD;
 		pi = &p->InvBody[rv];
