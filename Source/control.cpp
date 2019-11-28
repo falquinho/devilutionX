@@ -966,12 +966,11 @@ void CheckPanelInfo()
 		}
 	}
 
-	ClearComparisonInfo();
-
 	if (MouseX > 190 + WIDTH_DIFF_2 && MouseX < 437 + WIDTH_DIFF_2 && MouseY > 356 + HEIGHT_DIFF && MouseY < 385 + HEIGHT_DIFF) // TODO: create belt enums
 		pcursinvitem = CheckInvHLight();
-	else
-		ClearComparisonInfo();
+
+	// clear because i dont wanna comparison on belt items
+	ClearComparisonInfo();
 }
 
 void CheckBtnUp()
