@@ -1353,7 +1353,8 @@ void QuickSetItem()
 	if (pcurs < CURSOR_FIRSTITEM)
 		return;
 
-	int invrect_index;
+	int invrect_index = 0;
+	
 	if(plr[myplr].HoldItem._iLoc == ILOC_HELM)
 		invrect_index = 0;
 		

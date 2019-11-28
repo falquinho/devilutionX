@@ -5,6 +5,7 @@
 #include "modern_meters.h"
 #include "modern_panel_buttons.h"
 #include "modern_info_box.h"
+#include "modern_spell_setter.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -31,6 +32,7 @@ void DrawModernPanel()
 	DrawModernMeters();
 	DrawModernSpellbar();
 	DrawModernBelt();
+	DrawModernSpellSetter();
 }
 
 
@@ -83,11 +85,15 @@ void ModernPanelOnCharPress(char c)
 
 void ModerPanelOnMouseBtnDown(char btn)
 {
+	CloseModernSpellSetter();
+	
 	if( btn == 'l') {
 		if(CheckCursorOverButtons())
 			return OnLeftMouseClickPanelButtons();
 		else if(CheckCursorOverModernBelt())
 			return OnLeftClickModernBelt();
+		else if(CheckCursorOverModernSpellbar())
+			return OnClickModernSpellbar();
 	}
 }
 
