@@ -23,7 +23,7 @@ void SetLearnedSpells()
     unsigned long long int ctrl_bit = 1;
     num_learned_spells = 1; // always knows at least the class skill
     int index = -1;
-    for(int spell_id = 1; spell_id < 9; spell_id++, ctrl_bit <<= 1) {
+    for(int spell_id = 1; spell_id < 32; spell_id++, ctrl_bit <<= 1) {
         // if(!(ctrl_bit & mask))
         //     continue;
         index++;
@@ -76,14 +76,15 @@ void DrawLearnedSpellsRow()
     bkg.y -= 11;
     DrawRectangle(bkg, PAL16_GRAY + 15, true);
     DrawString(bkg.x + 3, bkg.y, "LEARNED SPELLS");
-    for(int i = 0; i < num_learned_spells; i++){
-        CelDraw( 
-            SCREEN_X + learned_spells_box.x + 3 + (i * frame_size), 
-            SCREEN_Y + learned_spells_box.y + frame_size, 
-            spellicons_sm_cel, 
-            i+1, 
-            frame_size
-        );
+
+    int left = learned_spells_box.x + SCREEN_X;
+    int bottom = learned_spells_box.y + SCREEN_Y + frame_size;
+    for(int i = 0; i < num_learned_spells; i++, left += frame_size){
+        if(i == 19) {
+            left = learned_spells_box.x + SCREEN_X;
+            bottom += frame_size;
+        }
+        CelDraw(left, bottom, spellicons_sm_cel, i+1, frame_size);
     }
 }
 
