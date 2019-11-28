@@ -1353,35 +1353,43 @@ void QuickSetItem()
 	if (pcurs < CURSOR_FIRSTITEM)
 		return;
 
-	switch(plr[myplr].HoldItem._iLoc)
-	{
-		case ILOC_HELM:
-			CheckInvPaste(myplr, 453+WIDTH_DIFF, 30);
-			break;
-		case ILOC_RING:
-			CheckInvPaste(myplr, 366+WIDTH_DIFF, 204);
-			break;
-		case ILOC_AMULET:
-			CheckInvPaste(myplr, 525+WIDTH_DIFF, 58);
-			break;
-		case ILOC_ONEHAND:
-			CheckInvPaste(myplr, 338+WIDTH_DIFF, 105);
-			break;
-		case ILOC_ARMOR:
-			CheckInvPaste(myplr, 453+WIDTH_DIFF, 103);
-			break;
-		case ILOC_BELT:
-			break;
-		case ILOC_TWOHAND:
-			CheckInvPaste(myplr, 338+WIDTH_DIFF, 105);
-			break;
-		case ILOC_UNEQUIPABLE:
-			QuickPutItemOnBelt();
-			break;
-		default:
-			CheckInvPaste(myplr, og_mousex, og_mousey);
-			return;
+	int invrect_index;
+	if(plr[myplr].HoldItem._iLoc == ILOC_HELM)
+		invrect_index = 0;
+		
+	else if(plr[myplr].HoldItem._iLoc == ILOC_RING) {
+		if(plr[myplr].InvBody[INVLOC_RING_LEFT]._itype == ITYPE_NONE)
+			invrect_index = 4;
+		else if(plr[myplr].InvBody[INVLOC_RING_RIGHT]._itype == ITYPE_NONE)
+			invrect_index = 5;
+		else
+			invrect_index = 4;
 	}
+	else if(plr[myplr].HoldItem._iLoc == ILOC_AMULET)
+		invrect_index = 6;
+		
+	else if(plr[myplr].HoldItem._iLoc == ILOC_ONEHAND) {
+		if(plr[myplr].HoldItem._itype == ITYPE_SHIELD)
+			invrect_index = 13;
+		else
+			invrect_index = 7;
+	}
+	else if(plr[myplr].HoldItem._iLoc == ILOC_ARMOR)
+		invrect_index = 19;
+		
+	else if(plr[myplr].HoldItem._iLoc == ILOC_TWOHAND)
+		invrect_index = 7;
+		
+	else if(plr[myplr].HoldItem._iLoc == ILOC_UNEQUIPABLE)
+		invrect_index = 65;
+		
+	else 
+		return CheckInvPaste(myplr, og_mousex, og_mousey);
+
+	if(invrect_index >= 65)
+		QuickPutItemOnBelt();
+	else 
+		CheckInvPaste(myplr, InvRect[invrect_index].X + 1, InvRect[invrect_index].Y - 1);
 
 	if (pcurs < CURSOR_FIRSTITEM)
 		return;
