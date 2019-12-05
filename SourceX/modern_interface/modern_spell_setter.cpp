@@ -42,8 +42,8 @@ void SetSpellsBoundingBoxSizes(int *spells, Rect *box)
     for(int i = 0; i < MAX_SPELLS; i++, num_spells++) {
         if(spells[i] == 0)
             break;
-    }
-    int num_rows = (num_spells/19) + 1;
+    } 
+    int num_rows = num_spells? (num_spells/19) + 1 : 0;
     int num_cols = num_rows > 1? 19 : num_spells;
     box->w = num_cols * frame_size;
     box->h = num_rows * frame_size;
@@ -92,6 +92,13 @@ bool IsSpellSetterOpen()
 
 void DrawSpellsRow(char *label, int spells[], Rect box)
 {
+    static char SpellITbl[MAX_SPELLS] = {
+        1, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        28, 13, 12, 18, 16, 14, 18, 19, 11, 20,
+        15, 21, 23, 24, 25, 22, 26, 29, 37, 38,
+        39, 42, 41, 40, 10, 36, 30
+    };
+
     if(!box.w)
         return;
 
@@ -110,7 +117,7 @@ void DrawSpellsRow(char *label, int spells[], Rect box)
             left = SCREEN_X + box.x;
             bottom += frame_size;
         }
-        CelDraw(left, bottom, spellicons_sm_cel, 1, frame_size);
+        CelDraw(left, bottom, spellicons_sm_cel, SpellITbl[spells[i]], frame_size);
         left += frame_size;
     }
 }
