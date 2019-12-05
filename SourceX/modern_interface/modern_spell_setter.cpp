@@ -10,36 +10,74 @@ const int margin = 6;
 
 const int frame_size = 34;
 
-int learned_spells_id[MAX_SPELLS] = {};
-int num_learned_spells = 0;
-Rect learned_spells_box = {-1, -1, 0, 0};
+int class_skill[MAX_SPELLS] = {};
+Rect class_skill_box = {0, 0, 0, 0};
 
-Rect scroll_spells_box  = {-1, -1, 0, 0};
-Rect charge_spells_box  = {-1, -1, 0, 0};
+int charge_spell[MAX_SPELLS] = {};
+Rect charge_spell_box = {0, 0, 0, 0};
 
-void SetLearnedSpells()
+int scroll_spells[MAX_SPELLS] = {};
+Rect scroll_spells_box = {0, 0, 0, 0};
+
+int known_spells[MAX_SPELLS]  = {};
+Rect known_spells_box = {0, 0, 0, 0};
+
+
+void SetSpells(unsigned long long int mask, int *spells)
 {
-    unsigned long long int mask = plr[myplr]._pMemSpells;
     unsigned long long int ctrl_bit = 1;
-    num_learned_spells = 1; // always knows at least the class skill
-    int index = -1;
-    for(int spell_id = 1; spell_id < 32; spell_id++, ctrl_bit <<= 1) {
-        // if(!(ctrl_bit & mask))
-        //     continue;
-        index++;
-        num_learned_spells++;
-        learned_spells_id[index] = spell_id;
+    int curr_index = -1;
+    for(int spell = 1; spell < MAX_SPELLS; ctrl_bit <<= 1, spell++) {
+        if(!(ctrl_bit & mask))
+            continue;
+        spells[++curr_index] = spell;
+    } if(curr_index < MAX_SPELLS - 1) {
+        spells[++curr_index] = 0;
     }
-    learned_spells_box.w = (num_learned_spells > 19? 19 : num_learned_spells) * frame_size;
-    learned_spells_box.x = (SCREEN_WIDTH - learned_spells_box.w) / 2;
-    learned_spells_box.h = frame_size * (num_learned_spells > 19? 2 : 1);
-    learned_spells_box.y = panel_rect.y - margin - learned_spells_box.h;
+}
+
+void SetSpellsBoundingBoxSizes(int *spells, Rect *box)
+{
+    int num_spells = 0;
+    for(int i = 0; i < MAX_SPELLS; i++, num_spells++) {
+        if(spells[i] == 0)
+            break;
+    }
+    int num_rows = (num_spells/19) + 1;
+    int num_cols = num_rows > 1? 19 : num_spells;
+    box->w = num_cols * frame_size;
+    box->h = num_rows * frame_size;
+}
+
+void PositionSpellsBoxes()
+{
+    known_spells_box.x = (SCREEN_WIDTH - known_spells_box.w) / 2;
+    known_spells_box.y = panel_rect.y - known_spells_box.h - 16;
+
+    scroll_spells_box.x = (SCREEN_WIDTH - scroll_spells_box.w) / 2;
+    scroll_spells_box.y = known_spells_box.y - scroll_spells_box.h - 16;
+
+    class_skill_box.x = (SCREEN_WIDTH/2) - class_skill_box.w - 8;
+    class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
+
+    charge_spell_box.x = (SCREEN_WIDTH/2) + 8;
+    charge_spell_box.y = class_skill_box.y;
 }
 
 void OpenModernSpellSetter(int spell_index)
 {
     target_spell_slot = spell_index;
-    SetLearnedSpells();
+    SetSpells(plr[myplr]._pAblSpells,  &class_skill[0]);
+    SetSpells(plr[myplr]._pMemSpells,  &known_spells[0]);
+    SetSpells(plr[myplr]._pScrlSpells, &scroll_spells[0]);
+    SetSpells(plr[myplr]._pISpells,    &charge_spell[0]);
+
+    SetSpellsBoundingBoxSizes(&class_skill[0], &class_skill_box);
+    SetSpellsBoundingBoxSizes(&known_spells[0], &known_spells_box);
+    SetSpellsBoundingBoxSizes(&scroll_spells[0], &scroll_spells_box);
+    SetSpellsBoundingBoxSizes(&charge_spell[0], &charge_spell_box);
+
+    PositionSpellsBoxes();
 }
 
 void CloseModernSpellSetter()
@@ -52,49 +90,57 @@ bool IsSpellSetterOpen()
     return target_spell_slot >= 0;
 }
 
-bool CheckCursorOverSpellSetter()
+void DrawSpellsRow(char *label, int spells[], Rect box)
 {
-    if(!IsSpellSetterOpen())
-        return false;
-    
-    if(
-        CoordInsideRect(MouseX, MouseY, learned_spells_box) ||
-        CoordInsideRect(MouseX, MouseY, scroll_spells_box ) ||
-        CoordInsideRect(MouseX, MouseY, charge_spells_box )
-    )
-        return true;
+    if(!box.w)
+        return;
 
-    return false;
-}
-
-void DrawLearnedSpellsRow()
-{
-    Rect bkg = learned_spells_box;
-    bkg.w = bkg.w < 14 * 6? 14 * 6 + 6 : bkg.w + 6;
-    bkg.x = ((SCREEN_WIDTH - bkg.w) / 2) + 3;
-    bkg.h += 14;
-    bkg.y -= 11;
+    Rect bkg = box;
+    bkg.h += 16; bkg.y -= 14;
     DrawRectangle(bkg, PAL16_GRAY + 15, true);
-    DrawString(bkg.x + 3, bkg.y, "LEARNED SPELLS");
+    DrawString(bkg.x, bkg.y, label);
 
-    int left = learned_spells_box.x + SCREEN_X;
-    int bottom = learned_spells_box.y + SCREEN_Y + frame_size;
-    for(int i = 0; i < num_learned_spells; i++, left += frame_size){
+    int left   = SCREEN_X + box.x;
+    int bottom = SCREEN_Y + box.y + frame_size;
+    
+    for(int i = 0; i < MAX_SPELLS; i++) {
+        if(spells[i] == 0)
+            break;
         if(i == 19) {
-            left = learned_spells_box.x + SCREEN_X;
+            left = SCREEN_X + box.x;
             bottom += frame_size;
         }
-        CelDraw(left, bottom, spellicons_sm_cel, i+1, frame_size);
+        CelDraw(left, bottom, spellicons_sm_cel, 1, frame_size);
+        left += frame_size;
     }
 }
 
 
 void DrawModernSpellSetter()
 {
-    if(target_spell_slot < 0)
+    if(!IsSpellSetterOpen())
         return;
+    DrawSpellsRow("Known",   known_spells,  known_spells_box);
+    DrawSpellsRow("Scrolls", scroll_spells, scroll_spells_box);
+    DrawSpellsRow("Item",    charge_spell,  charge_spell_box);
+    DrawSpellsRow("Skill",   class_skill,   class_skill_box);
+}
 
-    DrawLearnedSpellsRow();
+
+bool CheckCursorOverSpellSetter()
+{
+    if(!IsSpellSetterOpen())
+        return false;
+    
+    if(
+        CoordInsideRect(MouseX, MouseY, known_spells_box)   ||
+        CoordInsideRect(MouseX, MouseY, scroll_spells_box ) ||
+        CoordInsideRect(MouseX, MouseY, charge_spell_box )  ||
+        CoordInsideRect(MouseX, MouseY, class_skill_box )
+    )
+        return true;
+
+    return false;
 }
 
 void OnCursorOverSpellSetter()
