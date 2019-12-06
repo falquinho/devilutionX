@@ -60,11 +60,16 @@ void PositionSpellsBoxes()
     scroll_spells_box.x = (SCREEN_WIDTH - scroll_spells_box.w) / 2;
     scroll_spells_box.y = known_spells_box.y - scroll_spells_box.h - 16;
 
-    class_skill_box.x = (SCREEN_WIDTH/2) - class_skill_box.w - 8;
-    class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
+	if(charge_spell_box.w > 0) {
+		class_skill_box.x = (SCREEN_WIDTH/2) - class_skill_box.w - 8;
+		class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
 
-    charge_spell_box.x = (SCREEN_WIDTH/2) + 8;
-    charge_spell_box.y = class_skill_box.y;
+		charge_spell_box.x = (SCREEN_WIDTH/2) + 8;
+		charge_spell_box.y = class_skill_box.y;
+	} else {
+		class_skill_box.x = (SCREEN_WIDTH - class_skill_box.w) / 2;
+		class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
+	}
 }
 
 void OpenModernSpellSetter(int spell_index)
@@ -201,8 +206,16 @@ void OnCursorOverSpellSetter()
         int mana_cost = GetManaAmount(myplr, known_spells[index]) >> 6;
         int min_dmg, max_dmg;
         GetDamageAmt(known_spells[index], &min_dmg, &max_dmg);
-        sprintf(&panelstr[0], "Mana: %d   DMG: %d - %d", mana_cost, min_dmg, max_dmg);
+		if(min_dmg == -1 && max_dmg == -1)
+			sprintf(&panelstr[0], "Mana cost: %d", mana_cost);	
+		else
+        	sprintf(&panelstr[0], "Mana: %d   DMG: %d - %d", mana_cost, min_dmg, max_dmg);
         pnumlines = 1;
+
+		if(known_spells[index] == SPL_HBOLT) {
+			sprintf(&panelstr[64], "Damages undead only");
+			pnumlines++;
+		}
     }
 }
 
