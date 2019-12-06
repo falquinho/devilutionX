@@ -1,5 +1,6 @@
 #include "modern_spellbar.h"
 #include "modern_control_panel.h"
+#include "modern_spell_setter.h"
 #include "utils.h"
 
 DEVILUTION_BEGIN_NAMESPACE
@@ -29,6 +30,11 @@ void OnCursorOverModernSpellbar()
     sprintf(panelstr, "Click to set spell");
 
     pnumlines = 1;
+}
+
+void OnClickModernSpellbar()
+{
+    OpenModernSpellSetter(0);
 }
 
 void DrawModernSpellbar()

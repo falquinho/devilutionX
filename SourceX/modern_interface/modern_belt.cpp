@@ -91,10 +91,12 @@ void UseFirstPotion(bool life_pot)
 
 void OnLeftClickModernBelt()
 {
-	if (pcurs >= CURSOR_FIRSTITEM) {
-		CheckInvPaste(myplr, MouseX, MouseY - 45);
+    int index = GetBeltIndex(MouseX - belt_rect.x);
+
+    if (pcurs >= CURSOR_FIRSTITEM) {
+		CheckInvPaste(myplr, MouseX, MouseY - 49);
 	} else {
-		CheckInvCut(myplr, MouseX, MouseY - 45);
+		CheckInvCut(myplr, MouseX, MouseY - 49);
 	}
 }
 

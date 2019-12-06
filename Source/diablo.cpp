@@ -2,6 +2,7 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
 #include "../SourceX/modern_interface/modern_control_panel.h"
+#include "../SourceX/modern_interface/modern_spell_setter.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -637,14 +638,19 @@ BOOL LeftMouseDown(int wParam)
 		if (deathflag) {
 			control_check_btn_press();
 		} else if (PauseMode != 2) {
+
+			if(CheckCursorOverSpellSetter()) {
+				OnClickSpellSetter();
+				return TRUE;
+			} else
+				CloseModernSpellSetter();
+
 			if (doomflag) {
 				doom_close();
 			} else if (spselflag) {
 				SetSpell();
 			} else if (stextflag) {
 				CheckStoreBtn();
-				//allows clicking through the sides of the panel (it doesn't cover the whole screen on higher resolutions)
-			// } else if (MouseY < PANEL_TOP || MouseX < WIDTH_DIFF_2 || MouseX > SCREEN_WIDTH - WIDTH_DIFF_2) {
 			} else if (!ModernPanelContainCurs()) {
 				if (!gmenu_exception() && !TryIconCurs()) {
 					if (questlog && MouseX > 32 && MouseX < 288 && MouseY > 32 && MouseY < 308) {

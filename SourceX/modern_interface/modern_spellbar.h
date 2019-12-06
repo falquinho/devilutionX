@@ -9,6 +9,8 @@ bool CheckCursorOverModernSpellbar();
 
 void OnCursorOverModernSpellbar();
 
+void OnClickModernSpellbar();
+
 void DrawModernSpellbar();
 
 DEVILUTION_END_NAMESPACE

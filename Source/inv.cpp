@@ -1,4 +1,5 @@
 #include "diablo.h"
+#include "../SourceX/modern_interface/modern_info_box.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -662,6 +663,7 @@ void CheckInvPaste(int pnum, int mx, int my)
 	sx = icursW28;
 	sy = icursH28;
 	done = FALSE;
+
 	for (r = 0; r < sizeof(InvRect) / sizeof(InvRect[0]) && !done; r++) {
 		if (i >= InvRect[r].X && i < InvRect[r].X + INV_SLOT_SIZE_PX) {
 			if (j >= InvRect[r].Y - INV_SLOT_SIZE_PX - 1 && j < InvRect[r].Y) {
@@ -1315,8 +1317,93 @@ void RemoveSpdBarItem(int pnum, int iv)
 	drawpanflag = 255;
 }
 
+void QuickPutItemOnBelt()
+{
+	if(
+		plr[myplr].HoldItem._iMiscId != IMISC_HEAL      &&
+		plr[myplr].HoldItem._iMiscId != IMISC_FULLHEAL  &&
+		plr[myplr].HoldItem._iMiscId != IMISC_MANA      &&
+		plr[myplr].HoldItem._iMiscId != IMISC_FULLMANA  &&
+		plr[myplr].HoldItem._iMiscId != IMISC_REJUV     &&
+		plr[myplr].HoldItem._iMiscId != IMISC_FULLREJUV &&
+		plr[myplr].HoldItem._iMiscId != IMISC_SCROLL    &&
+		plr[myplr].HoldItem._iMiscId != IMISC_SCROLLT
+	)
+		return;
+
+	int belt_index;
+	for(belt_index = 0; belt_index < MAXBELTITEMS; belt_index++) {
+		if(plr[myplr].SpdList[belt_index]._itype == ITYPE_NONE)
+			break;
+	}
+
+	if(belt_index >= MAXBELTITEMS)
+		return;
+
+	CheckInvPaste(myplr, 206 + WIDTH_DIFF_2 + (29 * belt_index), 385 + HEIGHT_DIFF - INV_SLOT_SIZE_PX);
+}
+
+void QuickSetItem()
+{
+	int og_mousex = MouseX;
+	int og_mousey = MouseY;
+
+	CheckInvCut(myplr, og_mousex, og_mousey);
+
+	if (pcurs < CURSOR_FIRSTITEM)
+		return;
+
+	int invrect_index = 0;
+	
+	if(plr[myplr].HoldItem._iLoc == ILOC_HELM)
+		invrect_index = 0;
+		
+	else if(plr[myplr].HoldItem._iLoc == ILOC_RING) {
+		if(plr[myplr].InvBody[INVLOC_RING_LEFT]._itype == ITYPE_NONE)
+			invrect_index = 4;
+		else if(plr[myplr].InvBody[INVLOC_RING_RIGHT]._itype == ITYPE_NONE)
+			invrect_index = 5;
+		else
+			invrect_index = 4;
+	}
+	else if(plr[myplr].HoldItem._iLoc == ILOC_AMULET)
+		invrect_index = 6;
+		
+	else if(plr[myplr].HoldItem._iLoc == ILOC_ONEHAND) {
+		if(plr[myplr].HoldItem._itype == ITYPE_SHIELD)
+			invrect_index = 13;
+		else
+			invrect_index = 7;
+	}
+	else if(plr[myplr].HoldItem._iLoc == ILOC_ARMOR)
+		invrect_index = 19;
+		
+	else if(plr[myplr].HoldItem._iLoc == ILOC_TWOHAND)
+		invrect_index = 7;
+		
+	else if(plr[myplr].HoldItem._iLoc == ILOC_UNEQUIPABLE)
+		invrect_index = 65;
+		
+	else 
+		return CheckInvPaste(myplr, og_mousex, og_mousey);
+
+	if(invrect_index >= 65)
+		QuickPutItemOnBelt();
+	else 
+		CheckInvPaste(myplr, InvRect[invrect_index].X + 1, InvRect[invrect_index].Y - 1);
+
+	if (pcurs < CURSOR_FIRSTITEM)
+		return;
+
+	CheckInvPaste(myplr, og_mousex, og_mousey);
+}
+
 void CheckInvItem()
 {
+	int shift_state = GetAsyncKeyState(DVL_VK_SHIFT);
+	if(shift_state && pcurs < CURSOR_FIRSTITEM)
+		return QuickSetItem();
+
 	if (pcurs >= CURSOR_FIRSTITEM) {
 		CheckInvPaste(myplr, MouseX, MouseY);
 	} else {
@@ -1906,6 +1993,7 @@ char CheckInvHLight()
 	pi = NULL;
 	p = &plr[myplr];
 	ClearPanel();
+
 	if (r >= 0 && r <= 3) {
 		rv = INVLOC_HEAD;
 		pi = &p->InvBody[rv];
@@ -1939,6 +2027,9 @@ char CheckInvHLight()
 		ii = r - 1;
 		rv = ii + 7;
 		pi = &p->InvList[ii];
+
+		SetCompareEquipmentInfo(*pi);
+
 	} else if (r >= 65) {
 		r -= 65;
 		drawsbarflag = TRUE;

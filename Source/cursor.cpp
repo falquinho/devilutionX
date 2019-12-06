@@ -1,5 +1,6 @@
 #include "diablo.h"
 #include "../SourceX/modern_interface/modern_control_panel.h"
+#include "../SourceX/modern_interface/modern_info_box.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -291,7 +292,11 @@ void CheckCursMove()
 	if (invflag && MouseX > SCREEN_WIDTH - 320 && MouseY < 352) {
 		pcursinvitem = CheckInvHLight();
 		return;
-	}
+	} 
+	// if not in the inv panel, clear any residual comparison info
+	else
+		ClearComparisonInfo();
+
 	//allows clicking below spellbook panel
 	if (sbookflag && MouseX > SCREEN_WIDTH - 320 && MouseY < 352) {
 		return;

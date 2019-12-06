@@ -1,11 +1,16 @@
 #include "devilution.h"
 #include "utils.h"
+#include "../Source/inv.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
 int char_width  = 6;
 
 int char_height = 12;
+
+char compare_info[4][128] = {"", "", "", ""};
+
+char compare_loc = NUM_INVLOC;
 
 
 void DrawMonsterInfo()
@@ -21,6 +26,33 @@ void DrawMonsterInfo()
         bkg.x = (SCREEN_WIDTH - bkg.w)/2;
         DrawRectangle(bkg, PAL16_GRAY + 15, true);
         DrawString(bkg.x, bkg.y, &panelstr[64 * i]);
+    }
+}
+
+
+void DrawCompareEquipInfo(Rect sister_rect)
+{
+    Rect bkg = {0, 0, 0, 0};
+    for(int i = 0; i < 4; i++){
+        if(compare_info[i][0] == '\0')
+            break;
+        int curr_w = strlen(&compare_info[i][0])*char_width + 4;
+        bkg.w = curr_w > bkg.w? curr_w : bkg.w;
+        bkg.h = ((i + 2) * char_height) + 4;
+    }
+
+    bkg.x = sister_rect.x - bkg.w - 4;
+    bkg.y = sister_rect.y;
+
+    DrawRectangle(bkg, PAL16_GRAY+15, false);
+
+    int offset = (bkg.w - (9*char_width))/2;
+    DrawString(bkg.x + offset, bkg.y, "EQUIPPED:");
+    for(int i = 0; i < 4; i++) {
+        if(compare_info[i][0] == '\0')
+            break;
+        offset = (bkg.w - (strlen(&compare_info[i][0]) * char_width))/2;
+        DrawString(bkg.x + offset, bkg.y + (char_height * (i + 1)), &compare_info[i][0]);
     }
 }
 
@@ -49,7 +81,7 @@ void DrawModernInfoBox()
     box_rect.y = MouseY - box_rect.h;
     PositionRectInScreen(&box_rect);
 
-    DrawRectangle(box_rect, PAL16_GRAY + 15, true);
+    DrawRectangle(box_rect, PAL16_GRAY + 15, false);
 
     int offset = (box_rect.w - strlen(infostr) * char_width)/2;
     DrawString(box_rect.x + offset, box_rect.y + 2, infostr);
@@ -58,6 +90,77 @@ void DrawModernInfoBox()
         offset = (box_rect.w - strlen(&panelstr[64 * i]) * char_width)/2;
         DrawString(box_rect.x + offset, box_rect.y + 2 + ((i + 1) * char_height), &panelstr[64 * i]);
     }
+
+    if(compare_info[0][0] != '\0' && pcurs == CURSOR_HAND)
+        DrawCompareEquipInfo(box_rect);
+}
+
+
+void ClearComparisonInfo()
+{
+    for(int i = 0; i < 4; i++) {
+        compare_info[i][0] = '\0';
+    }
+    compare_loc = NUM_INVLOC;
+}
+
+
+void SetCompareEquipmentInfo(ItemStruct item)
+{
+    ClearComparisonInfo();
+
+    if(item._itype == ITYPE_NONE)
+        return;
+
+    char inv_loc;
+    if(item._iLoc == ILOC_HELM)
+        inv_loc = INVLOC_HEAD;
+
+    else if(item._iLoc == ILOC_ARMOR)
+        inv_loc = INVLOC_CHEST;
+
+    else if(item._iLoc == ILOC_TWOHAND)
+        inv_loc = INVLOC_HAND_LEFT;
+
+    else if(item._iLoc == ILOC_ONEHAND && item._iClass == ICLASS_WEAPON)
+        inv_loc = INVLOC_HAND_LEFT;
+
+    else if(item._iLoc == ILOC_ONEHAND && item._iClass == ICLASS_ARMOR)
+        inv_loc = INVLOC_HAND_RIGHT;
+
+    else if(item._iLoc == ILOC_AMULET)
+        inv_loc = INVLOC_AMULET;
+
+    else if(item._iLoc == ILOC_RING) {
+        inv_loc = INVLOC_RING_LEFT;
+        ItemStruct item = plr[myplr].InvBody[inv_loc];
+        if(item._itype == ITYPE_NONE)
+            inv_loc = INVLOC_RING_RIGHT;
+    }
+    else
+        return;
+
+    ItemStruct target_item = plr[myplr].InvBody[inv_loc];
+
+    if(target_item._itype == ITYPE_NONE)
+        return;
+    
+    compare_loc = inv_loc;
+
+    strcpy(&compare_info[0][0], target_item._iName);
+
+    if (target_item._iClass == ICLASS_WEAPON) {
+		if (target_item._iMaxDur == DUR_INDESTRUCTIBLE)
+			sprintf(&compare_info[1][0], "damage: %i-%i  Indestructible", target_item._iMinDam, target_item._iMaxDam);
+		else
+			sprintf(&compare_info[1][0], "damage: %i-%i  Dur: %i/%i", target_item._iMinDam, target_item._iMaxDam, target_item._iDurability, target_item._iMaxDur);
+	}
+	else if (target_item._iClass == ICLASS_ARMOR) {
+		if (target_item._iMaxDur == DUR_INDESTRUCTIBLE)
+			sprintf(&compare_info[1][0], "armor: %i  Indestructible", target_item._iAC);
+		else
+			sprintf(&compare_info[1][0], "armor: %i  Dur: %i/%i", target_item._iAC, target_item._iDurability, target_item._iMaxDur);
+	}
 }
 
 DEVILUTION_END_NAMESPACE

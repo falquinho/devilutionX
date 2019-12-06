@@ -1,4 +1,5 @@
 #include "diablo.h"
+#include "../SourceX/modern_interface/modern_info_box.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -153,6 +154,8 @@ void DrawSpellCel(int xp, int yp, BYTE *pCelBuff, int nCel, int nWidth)
 	CelDrawLight(xp, yp, pCelBuff, nCel, nWidth, SplTransTbl);
 }
 
+// Builds a table that converts the spell frame colors based on it's typ
+// and condition
 void SetSpellTrans(char t)
 {
 	int i;
@@ -245,7 +248,11 @@ void DrawSpellList()
 	x = 636;
 	y = 495;
 	ClearPanel();
+
+	// for each type of spell
 	for (i = 0; i < 4; i++) {
+		// define the bit mask to use, translation table(color translation)
+		// and the cursor highligth frame(the c variable)
 		switch ((spell_type)i) {
 		case RSPLTYPE_SKILL:
 			SetSpellTrans(RSPLTYPE_SKILL);
@@ -267,28 +274,47 @@ void DrawSpellList()
 			mask = plr[myplr]._pISpells;
 			break;
 		}
+		// for each spell
 		for (spl = 1, j = 1; j < MAX_SPELLS; spl <<= 1, j++) {
+			// check if spell is available
 			if (!(mask & spl))
 				continue;
+
+			// if its a learned spell
 			if (i == RSPLTYPE_SPELL) {
+				// compute current level from base and itens
 				s = plr[myplr]._pISplLvlAdd + plr[myplr]._pSplLvl[j];
 				if (s < 0)
 					s = 0;
 				if (s > 0)
 					trans = RSPLTYPE_SPELL;
 				else
+					// if the resulting level is 0 or less its translation table is set accordingly
+					// this will in effect "gray out" the spell icon to show it can't be used
 					trans = RSPLTYPE_INVALID;
+
 				SetSpellTrans(trans);
 			}
+
+			// if in town and the current spell is not usable in town also set the
+			// translation table to "invalid"
 			if (currlevel == 0 && !spelldata[j].sTownSpell)
 				SetSpellTrans(RSPLTYPE_INVALID);
+
+			// draw the spell icon, note the table of conversion
 			DrawSpellCel(x, y, pSpellCels, SpellITbl[j], 56);
 			lx = x - 64;
 			ly = y - 216;
+
+			// if cursor over the current spell icon
 			if (MouseX >= lx && MouseX < lx + 56 && MouseY >= ly && MouseY < ly + 56) {
 				pSpell = j;
 				pSplType = i;
+				// draw the cursor highlight frame(a outline and the words "spell" or "skill" or "staff" or "scroll")
+				// yes the outline and words when you cursor over are a frame in the spells icons cel
 				DrawSpellCel(x, y, pSpellCels, c, 56);
+
+				// set the info string
 				switch (i) {
 				case RSPLTYPE_SKILL:
 					sprintf(infostr, "%s Skill", spelldata[pSpell].sSkillText);
@@ -344,7 +370,8 @@ void DrawSpellList()
 						AddPanelString(tempstr, TRUE);
 					}
 				}
-			}
+			} // end if cursor over the current spell icon
+
 			x -= 56;
 			if (x == 20) {
 				y -= 56;
@@ -964,8 +991,12 @@ void CheckPanelInfo()
 			}
 		}
 	}
+
 	if (MouseX > 190 + WIDTH_DIFF_2 && MouseX < 437 + WIDTH_DIFF_2 && MouseY > 356 + HEIGHT_DIFF && MouseY < 385 + HEIGHT_DIFF) // TODO: create belt enums
 		pcursinvitem = CheckInvHLight();
+
+	// clear because i dont wanna comparison on belt items
+	ClearComparisonInfo();
 }
 
 void CheckBtnUp()
