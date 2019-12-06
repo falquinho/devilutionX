@@ -1,8 +1,11 @@
 #include "modern_spell_setter.h"
 #include "modern_control_panel.h"
+#include "../Source/spells.h"
 #include "utils.h"
 
 DEVILUTION_BEGIN_NAMESPACE
+
+const int MAX_COLS = 19;
 
 int  target_spell_slot = -1;
 
@@ -43,8 +46,8 @@ void SetSpellsBoundingBoxSizes(int *spells, Rect *box)
         if(spells[i] == 0)
             break;
     } 
-    int num_rows = num_spells? (num_spells/19) + 1 : 0;
-    int num_cols = num_rows > 1? 19 : num_spells;
+    int num_rows = num_spells? (num_spells/MAX_COLS) + 1 : 0;
+    int num_cols = num_rows > 1? MAX_COLS : num_spells;
     box->w = num_cols * frame_size;
     box->h = num_rows * frame_size;
 }
@@ -113,7 +116,7 @@ void DrawSpellsRow(char *label, int spells[], Rect box)
     for(int i = 0; i < MAX_SPELLS; i++) {
         if(spells[i] == 0)
             break;
-        if(i == 19) {
+        if(i == MAX_COLS) {
             left = SCREEN_X + box.x;
             bottom += frame_size;
         }
@@ -150,9 +153,57 @@ bool CheckCursorOverSpellSetter()
     return false;
 }
 
+bool IsItemSpellScroll(ItemStruct item, int spell_id) {
+    if(item._itype == ITYPE_NONE) return false;
+    if(item._iMiscId != IMISC_SCROLL && item._iMiscId != IMISC_SCROLLT) return false;
+    if(item._iSpell != spell_id) return false;
+    return true;
+}
+
+int CursPosToArrayIndex(Rect rect)
+{
+    int col = (MouseX - rect.x) / frame_size;
+    int row = (MouseY - rect.y) / frame_size;
+    return (row * MAX_COLS) + col;
+}
+
 void OnCursorOverSpellSetter()
 {
+    if(CoordInsideRect(MouseX, MouseY, class_skill_box)) {
+        sprintf(infostr, "%s Skill", spelldata[class_skill[0]].sSkillText);
+    }
+    else if(CoordInsideRect(MouseX, MouseY, scroll_spells_box )) {
+        int index = CursPosToArrayIndex(scroll_spells_box);
+        sprintf(infostr, "Scroll of %s", spelldata[scroll_spells[index]].sNameText);
+        int num_scrolls = 0;
+        for(int i = 0; i < plr[myplr]._pNumInv; i++) {
+            if(IsItemSpellScroll(plr[myplr].InvList[i], scroll_spells[index]))
+                num_scrolls++;
+        }
+        for (int i = 0; i < MAXBELTITEMS; i++) {
+            if(IsItemSpellScroll(plr[myplr].SpdList[i], scroll_spells[index]))
+                num_scrolls++;
+        }
+        sprintf(&panelstr[0], "%d scroll(s)", num_scrolls);
+        pnumlines = 1;
+    }
+    else if(CoordInsideRect(MouseX, MouseY, charge_spell_box)) {
+        sprintf(infostr, "Staff of %s", spelldata[charge_spell[0]].sNameText);
+        sprintf(&panelstr[0], "%i Charge(s)", plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges);
+        pnumlines = 1;
+    }
+    else if(CoordInsideRect(MouseX, MouseY, known_spells_box)) {
+        int index = CursPosToArrayIndex(known_spells_box);
+        int slvl  = plr[myplr]._pISplLvlAdd + plr[myplr]._pSplLvl[known_spells[index]];
+        slvl = slvl < 0? 0 : slvl;
+        sprintf(infostr, "Lvl %d %s", slvl, spelldata[known_spells[index]].sNameText);
 
+        int mana_cost = GetManaAmount(myplr, known_spells[index]) >> 6;
+        int min_dmg, max_dmg;
+        GetDamageAmt(known_spells[index], &min_dmg, &max_dmg);
+        sprintf(&panelstr[0], "Mana: %d   DMG: %d - %d", mana_cost, min_dmg, max_dmg);
+        pnumlines = 1;
+    }
 }
 
 void OnClickSpellSetter()

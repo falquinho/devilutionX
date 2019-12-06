@@ -52,6 +52,9 @@ void ModernPanelOnCursorIn()
 	else if(CheckCursorOverButtons())
 		return OnCursorOverButtons();
 	
+	else if(CheckCursorOverSpellSetter())
+		return OnCursorOverSpellSetter();
+	
 	infostr[0] = '\0';
 	pnumlines  = 0;
 	panelflag  = false;
@@ -64,7 +67,8 @@ bool ModernPanelContainCurs()
 	return CheckCursorOverButtons()     ||
 		CheckCursorOverModernBelt()     ||
 		CheckCursorOverModernMeters()   ||
-		CheckCursorOverModernSpellbar();
+		CheckCursorOverModernSpellbar() ||
+		CheckCursorOverSpellSetter();
 }
 
 
