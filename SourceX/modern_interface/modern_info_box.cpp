@@ -4,10 +4,6 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-int char_width  = 6;
-
-int char_height = 12;
-
 char compare_info[4][128] = {"", "", "", ""};
 
 char compare_loc = NUM_INVLOC;
@@ -15,14 +11,14 @@ char compare_loc = NUM_INVLOC;
 
 void DrawMonsterInfo()
 {
-    int str_box_w = strlen(infostr) * char_width;
-    Rect bkg = {(SCREEN_WIDTH - str_box_w)/2, 4, str_box_w, char_height};
+    int str_box_w = strlen(infostr) * CHAR_W;
+    Rect bkg = {(SCREEN_WIDTH - str_box_w)/2, 4, str_box_w, CHAR_H};
     DrawRectangle(bkg, PAL16_GRAY + 15, true);
     DrawString((SCREEN_WIDTH - bkg.w)/2, 4, infostr);
 
     for(int i = 0; i < pnumlines; i++) {
-        bkg.w = strlen(&panelstr[64 * i]) * char_width;
-        bkg.y = 4 + char_height + (char_height * i);
+        bkg.w = strlen(&panelstr[64 * i]) * CHAR_W;
+        bkg.y = 4 + CHAR_H + (CHAR_H * i);
         bkg.x = (SCREEN_WIDTH - bkg.w)/2;
         DrawRectangle(bkg, PAL16_GRAY + 15, true);
         DrawString(bkg.x, bkg.y, &panelstr[64 * i]);
@@ -36,9 +32,9 @@ void DrawCompareEquipInfo(Rect sister_rect)
     for(int i = 0; i < 4; i++){
         if(compare_info[i][0] == '\0')
             break;
-        int curr_w = strlen(&compare_info[i][0])*char_width + 4;
+        int curr_w = strlen(&compare_info[i][0])*CHAR_W + 4;
         bkg.w = curr_w > bkg.w? curr_w : bkg.w;
-        bkg.h = ((i + 2) * char_height) + 4;
+        bkg.h = ((i + 2) * CHAR_H) + 4;
     }
 
     bkg.x = sister_rect.x - bkg.w - 4;
@@ -46,13 +42,13 @@ void DrawCompareEquipInfo(Rect sister_rect)
 
     DrawRectangle(bkg, PAL16_GRAY+15, false);
 
-    int offset = (bkg.w - (9*char_width))/2;
+    int offset = (bkg.w - (9*CHAR_W))/2;
     DrawString(bkg.x + offset, bkg.y, "EQUIPPED:");
     for(int i = 0; i < 4; i++) {
         if(compare_info[i][0] == '\0')
             break;
-        offset = (bkg.w - (strlen(&compare_info[i][0]) * char_width))/2;
-        DrawString(bkg.x + offset, bkg.y + (char_height * (i + 1)), &compare_info[i][0]);
+        offset = (bkg.w - (strlen(&compare_info[i][0]) * CHAR_W))/2;
+        DrawString(bkg.x + offset, bkg.y + (CHAR_H * (i + 1)), &compare_info[i][0]);
     }
 }
 
@@ -67,12 +63,12 @@ void DrawModernInfoBox()
 
     Rect box_rect;
     
-    box_rect.h = ((1 + pnumlines) * char_height) + 4;
-    box_rect.w = strlen(infostr) * char_width;
+    box_rect.h = ((1 + pnumlines) * CHAR_H) + 4;
+    box_rect.w = strlen(infostr) * CHAR_W;
 
     int i;
     for (i = 0; i < pnumlines; i++) {
-        int curr_line_width = strlen(&panelstr[64 * i]) * char_width;
+        int curr_line_width = strlen(&panelstr[64 * i]) * CHAR_W;
         box_rect.w = curr_line_width > box_rect.w? curr_line_width : box_rect.w;
     }
     box_rect.w += 4;
@@ -83,12 +79,12 @@ void DrawModernInfoBox()
 
     DrawRectangle(box_rect, PAL16_GRAY + 15, false);
 
-    int offset = (box_rect.w - strlen(infostr) * char_width)/2;
+    int offset = (box_rect.w - strlen(infostr) * CHAR_W)/2;
     DrawString(box_rect.x + offset, box_rect.y + 2, infostr);
 
     for (i = 0; i < pnumlines; i++) {
-        offset = (box_rect.w - strlen(&panelstr[64 * i]) * char_width)/2;
-        DrawString(box_rect.x + offset, box_rect.y + 2 + ((i + 1) * char_height), &panelstr[64 * i]);
+        offset = (box_rect.w - strlen(&panelstr[64 * i]) * CHAR_W)/2;
+        DrawString(box_rect.x + offset, box_rect.y + 2 + ((i + 1) * CHAR_H), &panelstr[64 * i]);
     }
 
     if(compare_info[0][0] != '\0' && pcurs == CURSOR_HAND)

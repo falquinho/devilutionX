@@ -5,6 +5,9 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
+#define CHAR_W  6
+#define CHAR_H 12
+
 typedef struct Rect{
     int x; int y; int w; int h;
 } Rect;

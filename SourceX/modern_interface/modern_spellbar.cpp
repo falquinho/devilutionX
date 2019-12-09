@@ -63,11 +63,11 @@ void DrawModernSpellbar()
 	for(int i = 0; i < 5; i++, x += 42) {
         if(quick_spells[i])
             CelDraw(SCREEN_X + x, SCREEN_Y + y, spellicons_sm_cel, SpellITbl[quick_spells[i]], frame_size);
-		DrawString(x + 13, y - 6, hotkeys[i]);
+		DrawString(x + 13, y - CHAR_H/2, hotkeys[i]);
 	}
     if(plr[myplr]._pRSpell)
         CelDraw(SCREEN_X + x, SCREEN_Y + y, spellicons_sm_cel, SpellITbl[plr[myplr]._pRSpell], frame_size);
-    DrawString(x + 7, y - 6, hotkeys[5]);
+    DrawString(x + 7, y - CHAR_H/2, hotkeys[5]);
 }
 
 void SetSpell(int slot, int spell_id, char type)

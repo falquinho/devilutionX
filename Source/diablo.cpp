@@ -492,6 +492,10 @@ BOOL PressEscKey()
 		chrflag = 0;
 		rv = TRUE;
 	}
+	if(IsSpellSetterOpen()) {
+		CloseModernSpellSetter();
+		rv = TRUE;
+	}
 
 	return rv;
 }

@@ -134,7 +134,7 @@ void DrawModernSpellSetter()
     DrawSpellsRow("Item",    charge_spell,  charge_spell_box);
     DrawSpellsRow("Skill",   class_skill,   class_skill_box);
 
-    Rect title_bkg = {0, class_skill_box.y - 40, (strlen(spell_setter_title) * 6) + 8, 18};
+    Rect title_bkg = {0, class_skill_box.y - 40, (strlen(spell_setter_title) * CHAR_W) + 8, CHAR_H + 8};
     title_bkg.x = (SCREEN_WIDTH - title_bkg.w) / 2;
     DrawRectangle(title_bkg, PAL16_GRAY + 15, true);
     DrawString(title_bkg.x + 4, title_bkg.y + 2, spell_setter_title);
