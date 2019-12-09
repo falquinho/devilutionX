@@ -643,11 +643,10 @@ BOOL LeftMouseDown(int wParam)
 			control_check_btn_press();
 		} else if (PauseMode != 2) {
 
-			if(CheckCursorOverSpellSetter()) {
-				OnClickSpellSetter();
-				return TRUE;
-			} else
+			if(IsSpellSetterOpen() && !CheckCursorOverSpellSetter()) {
 				CloseModernSpellSetter();
+				return TRUE;
+			}
 
 			if (doomflag) {
 				doom_close();

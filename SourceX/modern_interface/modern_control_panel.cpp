@@ -123,15 +123,18 @@ void ModernPanelOnCharPress(char c)
 
 void ModerPanelOnMouseBtnDown(char btn)
 {
-	CloseModernSpellSetter();
-	
 	if( btn == 'l') {
 		if(CheckCursorOverButtons())
 			return OnLeftMouseClickPanelButtons();
+
 		else if(CheckCursorOverModernBelt())
 			return OnLeftClickModernBelt();
+
 		else if(CheckCursorOverModernSpellbar())
 			return OnClickModernSpellbar();
+
+		else if(CheckCursorOverSpellSetter())
+			return OnClickSpellSetter();
 	}
 }
 
