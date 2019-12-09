@@ -83,6 +83,40 @@ void ModernPanelOnCharPress(char c)
 		case 'G':
 			UseFirstPotion(false);
 			break;
+		case 'q':
+			CastSpell(0);
+			break;
+		case 'w':
+			CastSpell(1);
+			break;
+		case 'e':
+			CastSpell(2);
+			break;
+		case 'r':
+			CastSpell(3);
+			break;
+		case 't':
+			CastSpell(4);
+			break;
+		case 'Q':
+			OpenModernSpellSetter(0);
+			break;
+		case 'W':
+			OpenModernSpellSetter(1);
+			break;
+		case 'E':
+			OpenModernSpellSetter(2);
+			break;
+		case 'R':
+			OpenModernSpellSetter(3);
+			break;
+		case 'T':
+			OpenModernSpellSetter(4);
+			break;
+		case 's':
+		case 'S':
+			OpenModernSpellSetter(5);
+			break;
 	}
 }
 

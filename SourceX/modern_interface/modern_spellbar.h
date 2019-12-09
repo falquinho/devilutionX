@@ -13,6 +13,10 @@ void OnClickModernSpellbar();
 
 void DrawModernSpellbar();
 
+void SetSpell(int slot, int spell_id, char type);
+
+void CastSpell(int slot);
+
 DEVILUTION_END_NAMESPACE
 
 #endif

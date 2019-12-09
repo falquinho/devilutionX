@@ -54,6 +54,7 @@ extern int spselflag;
 void DrawSpellCel(int xp, int yp, BYTE *Trans, int nCel, int w);
 void SetSpellTrans(char t);
 void DrawSpell();
+void SetSpellInfo(int spell_id, char spell_type);
 void DrawSpellList();
 void SetSpell();
 void SetSpeedSpell(int slot);

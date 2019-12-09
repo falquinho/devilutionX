@@ -238,6 +238,66 @@ void DrawSpell()
 		DrawSpellCel(629 + WIDTH_DIFF_2, 631 + HEIGHT_DIFF, pSpellCels, 27, 56);
 }
 
+bool IsItemSpellScroll(ItemStruct item, int spell_id) {
+    if(item._itype == ITYPE_NONE) return false;
+    if(item._iMiscId != IMISC_SCROLL && item._iMiscId != IMISC_SCROLLT) return false;
+    if(item._iSpell != spell_id) return false;
+    return true;
+}
+
+int GetFinalSpellLevel(int spell_id)
+{
+	int spell_lvl = plr[myplr]._pISplLvlAdd + plr[myplr]._pSplLvl[spell_id];
+	if(spell_lvl < 0) spell_lvl = 0;
+	return spell_lvl;
+}
+
+void SetSpellInfo(int spell_id, char type)
+{
+	if (type == RSPLTYPE_SKILL) {
+		printf("RSPLTYPE_SKILL\n");
+		sprintf(infostr, "%s Skill", spelldata[spell_id].sSkillText);
+	} else if (type == RSPLTYPE_SPELL) {
+		printf("RSPLTYPE_SPELL\n");
+		int spell_lvl = GetFinalSpellLevel(spell_id);
+		sprintf(infostr, "%s Spell", spelldata[spell_id].sNameText);
+		if (spell_id == SPL_HBOLT) {
+			sprintf(tempstr, "Damages undead only");
+			AddPanelString(tempstr, TRUE);
+		}
+		if (spell_lvl == 0)
+			sprintf(tempstr, "Spell Level 0 - Unusable");
+		else
+			sprintf(tempstr, "Spell Level %i", spell_lvl);
+		AddPanelString(tempstr, TRUE);
+	} else if (type == RSPLTYPE_SCROLL) {
+		printf("RSPLTYPE_SCROLL\n");
+		sprintf(infostr, "Scroll of %s", spelldata[spell_id].sNameText);
+		int num_scrolls = 0;
+		for (int t = 0; t < plr[myplr]._pNumInv; t++) {
+			if (IsItemSpellScroll(plr[myplr].InvList[t], spell_id))
+				num_scrolls++;
+		}
+		for (int t = 0; t < MAXBELTITEMS; t++) {
+			if (IsItemSpellScroll(plr[myplr].SpdList[t], spell_id))
+				num_scrolls++;
+		}
+		if (num_scrolls == 1)
+			strcpy(tempstr, "1 Scroll");
+		else
+			sprintf(tempstr, "%i Scrolls", num_scrolls);
+		AddPanelString(tempstr, TRUE);
+	} else if (type == RSPLTYPE_CHARGES) {
+		printf("RSPLTYPE_CHARGES\n");
+		sprintf(infostr, "Staff of %s", spelldata[pSpell].sNameText);
+		if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges == 1)
+			strcpy(tempstr, "1 Charge");
+		else
+			sprintf(tempstr, "%i Charges", plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges);
+		AddPanelString(tempstr, TRUE);
+	}
+}
+
 void DrawSpellList()
 {
 	int i, j, x, y, c, s, t, v, lx, ly, trans;
@@ -283,9 +343,7 @@ void DrawSpellList()
 			// if its a learned spell
 			if (i == RSPLTYPE_SPELL) {
 				// compute current level from base and itens
-				s = plr[myplr]._pISplLvlAdd + plr[myplr]._pSplLvl[j];
-				if (s < 0)
-					s = 0;
+				s = GetFinalSpellLevel(j);
 				if (s > 0)
 					trans = RSPLTYPE_SPELL;
 				else
@@ -314,55 +372,8 @@ void DrawSpellList()
 				// yes the outline and words when you cursor over are a frame in the spells icons cel
 				DrawSpellCel(x, y, pSpellCels, c, 56);
 
-				// set the info string
-				switch (i) {
-				case RSPLTYPE_SKILL:
-					sprintf(infostr, "%s Skill", spelldata[pSpell].sSkillText);
-					break;
-				case RSPLTYPE_SPELL:
-					sprintf(infostr, "%s Spell", spelldata[pSpell].sNameText);
-					if (pSpell == SPL_HBOLT) {
-						sprintf(tempstr, "Damages undead only");
-						AddPanelString(tempstr, TRUE);
-					}
-					if (s == 0)
-						sprintf(tempstr, "Spell Level 0 - Unusable");
-					else
-						sprintf(tempstr, "Spell Level %i", s);
-					AddPanelString(tempstr, TRUE);
-					break;
-				case RSPLTYPE_SCROLL:
-					sprintf(infostr, "Scroll of %s", spelldata[pSpell].sNameText);
-					v = 0;
-					for (t = 0; t < plr[myplr]._pNumInv; t++) {
-						if (plr[myplr].InvList[t]._itype != ITYPE_NONE
-						    && (plr[myplr].InvList[t]._iMiscId == IMISC_SCROLL || plr[myplr].InvList[t]._iMiscId == IMISC_SCROLLT)
-						    && plr[myplr].InvList[t]._iSpell == pSpell) {
-							v++;
-						}
-					}
-					for (t = 0; t < MAXBELTITEMS; t++) {
-						if (plr[myplr].SpdList[t]._itype != ITYPE_NONE
-						    && (plr[myplr].SpdList[t]._iMiscId == IMISC_SCROLL || plr[myplr].SpdList[t]._iMiscId == IMISC_SCROLLT)
-						    && plr[myplr].SpdList[t]._iSpell == pSpell) {
-							v++;
-						}
-					}
-					if (v == 1)
-						strcpy(tempstr, "1 Scroll");
-					else
-						sprintf(tempstr, "%i Scrolls", v);
-					AddPanelString(tempstr, TRUE);
-					break;
-				case RSPLTYPE_CHARGES:
-					sprintf(infostr, "Staff of %s", spelldata[pSpell].sNameText);
-					if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges == 1)
-						strcpy(tempstr, "1 Charge");
-					else
-						sprintf(tempstr, "%i Charges", plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges);
-					AddPanelString(tempstr, TRUE);
-					break;
-				}
+				SetSpellInfo(pSpell, pSplType);
+
 				for (t = 0; t < 4; t++) {
 					if (plr[myplr]._pSplHotKey[t] == pSpell && plr[myplr]._pSplTHotKey[t] == pSplType) {
 						DrawSpellCel(x, y, pSpellCels, t + 48, 56);

@@ -819,10 +819,12 @@ void RightMouseDown()
 		} else if (!stextflag) {
 			if (spselflag) {
 				SetSpell();
-			} else if (MouseY >= 352
-			    || (!sbookflag || (MouseX <= SCREEN_WIDTH - 320))
-			        && !TryIconCurs()
-			        && (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))) {
+			} else if (
+				MouseY >= 352 || 
+				(!sbookflag || (MouseX <= SCREEN_WIDTH - 320)) && 
+				!TryIconCurs() && 
+				(pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))
+			) {
 				if (pcurs == 1) {
 					if (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))
 						CheckPlrSpell();
@@ -1151,14 +1153,14 @@ void PressChar(int vkey)
 		return;
 	case 'Q':
 	case 'q':
-		if (!stextflag) {
-			chrflag = FALSE;
-			if (!questlog) {
-				StartQuestlog();
-			} else {
-				questlog = FALSE;
-			}
-		}
+		// if (!stextflag) {
+		// 	chrflag = FALSE;
+		// 	if (!questlog) {
+		// 		StartQuestlog();
+		// 	} else {
+		// 		questlog = FALSE;
+		// 	}
+		// }
 		return;
 	case 'Z':
 	case 'z':
@@ -1166,15 +1168,15 @@ void PressChar(int vkey)
 		return;
 	case 'S':
 	case 's':
-		if (!stextflag) {
-			invflag = 0;
-			if (!spselflag) {
-				DoSpeedBook();
-			} else {
-				spselflag = 0;
-			}
-			track_repeat_walk(0);
-		}
+		// if (!stextflag) {
+		// 	invflag = 0;
+		// 	if (!spselflag) {
+		// 		DoSpeedBook();
+		// 	} else {
+		// 		spselflag = 0;
+		// 	}
+		// 	track_repeat_walk(0);
+		// }
 		return;
 	case 'B':
 	case 'b':
@@ -1322,12 +1324,12 @@ void PressChar(int vkey)
 		return;
 	case 'R':
 	case 'r':
-		sprintf(tempstr, "seed = %i", glSeedTbl[currlevel]);
-		NetSendCmdString(1 << myplr, tempstr);
-		sprintf(tempstr, "Mid1 = %i : Mid2 = %i : Mid3 = %i", glMid1Seed[currlevel], glMid2Seed[currlevel], glMid3Seed[currlevel]);
-		NetSendCmdString(1 << myplr, tempstr);
-		sprintf(tempstr, "End = %i", glEndSeed[currlevel]);
-		NetSendCmdString(1 << myplr, tempstr);
+		// sprintf(tempstr, "seed = %i", glSeedTbl[currlevel]);
+		// NetSendCmdString(1 << myplr, tempstr);
+		// sprintf(tempstr, "Mid1 = %i : Mid2 = %i : Mid3 = %i", glMid1Seed[currlevel], glMid2Seed[currlevel], glMid3Seed[currlevel]);
+		// NetSendCmdString(1 << myplr, tempstr);
+		// sprintf(tempstr, "End = %i", glEndSeed[currlevel]);
+		// NetSendCmdString(1 << myplr, tempstr);
 		return;
 	case 'T':
 	case 't':
