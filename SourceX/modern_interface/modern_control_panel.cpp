@@ -84,19 +84,19 @@ void ModernPanelOnCharPress(char c)
 			UseFirstPotion(false);
 			break;
 		case 'q':
-			CastSpell(0);
+			SpellbarCastSpell(0);
 			break;
 		case 'w':
-			CastSpell(1);
+			SpellbarCastSpell(1);
 			break;
 		case 'e':
-			CastSpell(2);
+			SpellbarCastSpell(2);
 			break;
 		case 'r':
-			CastSpell(3);
+			SpellbarCastSpell(3);
 			break;
 		case 't':
-			CastSpell(4);
+			SpellbarCastSpell(4);
 			break;
 		case 'Q':
 			OpenModernSpellSetter(0);

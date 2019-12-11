@@ -2087,6 +2087,7 @@ void RemoveScroll(int pnum)
 	}
 }
 
+// Check if the equipped spell can be used from a scroll.
 BOOL UseScroll()
 {
 	int i;
@@ -2114,6 +2115,7 @@ BOOL UseScroll()
 	return FALSE;
 }
 
+// Acctualy consume the chage of the equipped staff if possible.
 void UseStaffCharge(int pnum)
 {
 	if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
@@ -2125,6 +2127,7 @@ void UseStaffCharge(int pnum)
 	}
 }
 
+// Check if the equipped spell can be used from the equipped staff.
 BOOL UseStaff()
 {
 	if (pcurs == CURSOR_HAND) {

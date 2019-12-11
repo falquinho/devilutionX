@@ -1,4 +1,5 @@
 #include "diablo.h"
+#include "../SourceX/modern_interface/modern_control_panel.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -2859,8 +2860,7 @@ BOOL PM_DoSpell(int pnum)
 
 		if (!plr[pnum]._pSplFrom) {
 			if (plr[pnum]._pRSplType == RSPLTYPE_SCROLL) {
-				if (!(plr[pnum]._pScrlSpells
-				        & (unsigned __int64)1 << (plr[pnum]._pRSpell - 1))) {
+				if (!(plr[pnum]._pScrlSpells & (unsigned __int64)1 << (plr[pnum]._pRSpell - 1))) {
 					plr[pnum]._pRSpell = SPL_INVALID;
 					plr[pnum]._pRSplType = RSPLTYPE_INVALID;
 					drawpanflag = 255;
@@ -2868,8 +2868,7 @@ BOOL PM_DoSpell(int pnum)
 			}
 
 			if (plr[pnum]._pRSplType == RSPLTYPE_CHARGES) {
-				if (!(plr[pnum]._pISpells
-				        & (unsigned __int64)1 << (plr[pnum]._pRSpell - 1))) {
+				if (!(plr[pnum]._pISpells & (unsigned __int64)1 << (plr[pnum]._pRSpell - 1))) {
 					plr[pnum]._pRSpell = SPL_INVALID;
 					plr[pnum]._pRSplType = RSPLTYPE_INVALID;
 					drawpanflag = 255;
@@ -3684,8 +3683,9 @@ void CheckPlrSpell()
 		return;
 	}
 
-	if (pcurs != CURSOR_HAND
-	    || (MouseY >= PANEL_TOP && MouseX >= WIDTH_DIFF_2 && MouseX <= SCREEN_WIDTH - WIDTH_DIFF_2)
+	if (
+		pcurs != CURSOR_HAND
+	    || ModernPanelContainCurs()
 	    || ((chrflag && MouseX < 320 && MouseY < 352) || ((invflag || sbookflag) && MouseX > SCREEN_WIDTH - 320 && MouseY < 352))
 	        && rspell != SPL_HEAL
 	        && rspell != SPL_IDENTIFY

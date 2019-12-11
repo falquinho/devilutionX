@@ -213,6 +213,9 @@ void SetSpellTrans(char t)
 	}
 }
 
+
+// Check whether the equipped spell is invalid and draw its icon accordingly. Note that the spell
+// level calculation is redundant since it is also done within the CheckSpell function.
 void DrawSpell()
 {
 	char spl, st;
@@ -245,21 +248,15 @@ bool IsItemSpellScroll(ItemStruct item, int spell_id) {
     return true;
 }
 
-int GetFinalSpellLevel(int spell_id)
-{
-	int spell_lvl = plr[myplr]._pISplLvlAdd + plr[myplr]._pSplLvl[spell_id];
-	if(spell_lvl < 0) spell_lvl = 0;
-	return spell_lvl;
-}
-
 void SetSpellInfo(int spell_id, char type)
 {
 	if (type == RSPLTYPE_SKILL) {
 		printf("RSPLTYPE_SKILL\n");
 		sprintf(infostr, "%s Skill", spelldata[spell_id].sSkillText);
+
 	} else if (type == RSPLTYPE_SPELL) {
 		printf("RSPLTYPE_SPELL\n");
-		int spell_lvl = GetFinalSpellLevel(spell_id);
+		int spell_lvl = GetSpellLevel(myplr, spell_id);
 		sprintf(infostr, "%s Spell", spelldata[spell_id].sNameText);
 		if (spell_id == SPL_HBOLT) {
 			sprintf(tempstr, "Damages undead only");
@@ -270,6 +267,7 @@ void SetSpellInfo(int spell_id, char type)
 		else
 			sprintf(tempstr, "Spell Level %i", spell_lvl);
 		AddPanelString(tempstr, TRUE);
+
 	} else if (type == RSPLTYPE_SCROLL) {
 		printf("RSPLTYPE_SCROLL\n");
 		sprintf(infostr, "Scroll of %s", spelldata[spell_id].sNameText);
@@ -287,6 +285,7 @@ void SetSpellInfo(int spell_id, char type)
 		else
 			sprintf(tempstr, "%i Scrolls", num_scrolls);
 		AddPanelString(tempstr, TRUE);
+		
 	} else if (type == RSPLTYPE_CHARGES) {
 		printf("RSPLTYPE_CHARGES\n");
 		sprintf(infostr, "Staff of %s", spelldata[pSpell].sNameText);
@@ -343,7 +342,7 @@ void DrawSpellList()
 			// if its a learned spell
 			if (i == RSPLTYPE_SPELL) {
 				// compute current level from base and itens
-				s = GetFinalSpellLevel(j);
+				s = GetSpellLevel(myplr, j);
 				if (s > 0)
 					trans = RSPLTYPE_SPELL;
 				else

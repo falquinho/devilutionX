@@ -191,18 +191,18 @@ void OnClickSpellSetter()
 {
     int spell_index;
     if(CoordInsideRect(MouseX, MouseY, class_skill_box)) {
-        SetSpell(target_spell_slot, class_skill[0], RSPLTYPE_SKILL);
+        SpellbarSetSpell(target_spell_slot, class_skill[0], RSPLTYPE_SKILL);
     }
     else if(CoordInsideRect(MouseX, MouseY, scroll_spells_box)) {
         spell_index = CursPosToArrayIndex(scroll_spells_box);
-        SetSpell(target_spell_slot, scroll_spells[spell_index], RSPLTYPE_SCROLL);
+        SpellbarSetSpell(target_spell_slot, scroll_spells[spell_index], RSPLTYPE_SCROLL);
     }
     else if(CoordInsideRect(MouseX, MouseY, charge_spell_box)) {
-        SetSpell(target_spell_slot, charge_spell[0], RSPLTYPE_CHARGES);
+        SpellbarSetSpell(target_spell_slot, charge_spell[0], RSPLTYPE_CHARGES);
     }
     else if(CoordInsideRect(MouseX, MouseY, known_spells_box)) {
         spell_index = CursPosToArrayIndex(known_spells_box);
-        SetSpell(target_spell_slot, known_spells[spell_index], RSPLTYPE_SPELL);
+        SpellbarSetSpell(target_spell_slot, known_spells[spell_index], RSPLTYPE_SPELL);
     }
     CloseModernSpellSetter();
 }

@@ -239,6 +239,7 @@ int FindClosest(int sx, int sy, int rad)
 	return -1;
 }
 
+// Get the 'sn' spell level of the player 'id'.
 int GetSpellLevel(int id, int sn)
 {
 	int result;

@@ -823,7 +823,7 @@ void RightMouseDown()
 			if (spselflag) {
 				SetSpell();
 			} else if (
-				MouseY >= 352 || 
+				ModernPanelContainCurs() || 
 				(!sbookflag || (MouseX <= SCREEN_WIDTH - 320)) && 
 				!TryIconCurs() && 
 				(pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))

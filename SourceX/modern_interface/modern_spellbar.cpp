@@ -2,6 +2,7 @@
 #include "modern_control_panel.h"
 #include "modern_spell_setter.h"
 #include "utils.h"
+#include "../Source/diablo.h"
 #include "../Source/control.h"
 #include "../Source/player.h"
 
@@ -11,7 +12,13 @@ Rect spellbar_rect = {
     panel_rect.x + 71, panel_rect.y + 35, 244, 34
 };
 
-int quick_spells[5] = {0, 0, 0, 0, 0};
+unsigned int quick_spells[5] = {
+    SPL_INVALID,
+    SPL_INVALID,
+    SPL_INVALID,
+    SPL_INVALID,
+    SPL_INVALID
+};
 
 char spells_type[5]  = {};
 
@@ -36,7 +43,7 @@ void OnCursorOverModernSpellbar()
     if(slot >= 5 && plr[myplr]._pRSpell) {
         pnumlines = 0;
         SetSpellInfo(plr[myplr]._pRSpell, plr[myplr]._pRSplType);
-    } else if(!quick_spells[slot]) {
+    } else if(quick_spells[slot] == SPL_INVALID) {
         sprintf(infostr, "Spell slot #%d", slot + 1);
         sprintf(panelstr, "Click to set spell");
         pnumlines = 1;
@@ -61,16 +68,16 @@ void DrawModernSpellbar()
     int x = spellbar_rect.x;
 	int y = panel_rect.y + panel_rect.h - 2;
 	for(int i = 0; i < 5; i++, x += 42) {
-        if(quick_spells[i])
+        if(quick_spells[i] != SPL_INVALID)
             CelDraw(SCREEN_X + x, SCREEN_Y + y, spellicons_sm_cel, SpellITbl[quick_spells[i]], frame_size);
 		DrawString(x + 13, y - CHAR_H/2, hotkeys[i]);
 	}
-    if(plr[myplr]._pRSpell)
+    if(plr[myplr]._pRSpell != SPL_INVALID)
         CelDraw(SCREEN_X + x, SCREEN_Y + y, spellicons_sm_cel, SpellITbl[plr[myplr]._pRSpell], frame_size);
     DrawString(x + 7, y - CHAR_H/2, hotkeys[5]);
 }
 
-void SetSpell(int slot, int spell_id, char type)
+void SpellbarSetSpell(int slot, int spell_id, char type)
 {
     if(slot < 5) {
         quick_spells[slot] = spell_id;
@@ -82,16 +89,18 @@ void SetSpell(int slot, int spell_id, char type)
 
 }
 
-void CastSpell(int slot)
+void SpellbarCastSpell(int slot)
 {
-    // if (!quick_spells[slot])
-    //     return;
+    if (!quick_spells[slot])
+        return;
 
     int curr_spell = plr[myplr]._pRSpell;
     char curr_type = plr[myplr]._pRSplType;
     plr[myplr]._pRSpell = quick_spells[slot];
     plr[myplr]._pRSplType = spells_type[slot];
-    CheckPlrSpell();
+    RightMouseDown();
+    quick_spells[slot] = plr[myplr]._pRSpell;
+    spells_type[slot] = plr[myplr]._pRSplType;
     plr[myplr]._pRSpell = curr_spell;
     plr[myplr]._pRSplType = curr_type;
 }
