@@ -2263,13 +2263,22 @@ void AddFlame(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, i
 
 void AddFlamec(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, int id, int dam)
 {
+	printf("AddFlamec\n");
+
 	if (sx == dx && sy == dy) {
 		dx += XDirAdd[midir];
 		dy += YDirAdd[midir];
 	}
+
+	printf("Num Scrolls BEFORE GetMissileLevel: %d\n", GetNumOfSpellScrolls(plr[id]._pSpell));
 	GetMissileVel(mi, sx, sy, dx, dy, 32);
-	if (!mienemy)
+	printf("Num Scrolls AFTER GetMissileLevel: %d\n", GetNumOfSpellScrolls(plr[id]._pSpell));
+
+	if (!mienemy) {
+		printf("Num Scrolls BEFORE UseMana: %d\n", GetNumOfSpellScrolls(plr[id]._pSpell));
 		UseMana(id, SPL_FLAME);
+		printf("Num Scrolls AFTER UseMana: %d\n", GetNumOfSpellScrolls(plr[id]._pSpell));
+	}
 	missile[mi]._miVar1 = sx;
 	missile[mi]._miVar2 = sy;
 	missile[mi]._miVar3 = 0;
@@ -2445,10 +2454,14 @@ int AddMissile(int sx, int sy, int dx, int dy, int midir, int mitype, char micas
 	missile[mi]._mispllvl = spllvl;
 	missile[mi]._mimfnum = midir;
 
+
+
+	printf("Num Scrolls BEFORE SetMissDir: %d\n", GetNumOfSpellScrolls(plr[id]._pSpell));
 	if (missile[mi]._miAnimType == 255 || misfiledata[missile[mi]._miAnimType].mAnimFAmt < 8)
 		SetMissDir(mi, 0);
 	else
 		SetMissDir(mi, midir);
+	printf("Num Scrolls AFTER SetMissDir: %d\n", GetNumOfSpellScrolls(plr[id]._pSpell));
 
 	missile[mi]._mix = sx;
 	missile[mi]._miy = sy;
@@ -2473,7 +2486,10 @@ int AddMissile(int sx, int sy, int dx, int dy, int midir, int mitype, char micas
 		PlaySfxLoc(missiledata[mitype].mlSFX, missile[mi]._misx, missile[mi]._misy);
 	}
 
+	printf("Num Scrolls BEFORE mAddProc: %d\n", GetNumOfSpellScrolls(plr[id]._pSpell));
 	missiledata[mitype].mAddProc(mi, sx, sy, dx, dy, midir, micaster, id, midam);
+	printf("Num Scrolls AFTER mAddProc: %d\n", GetNumOfSpellScrolls(plr[id]._pSpell));
+
 
 	return mi;
 }

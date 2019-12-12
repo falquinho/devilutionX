@@ -2157,6 +2157,8 @@ void StartGoldDrop()
 
 BOOL UseInvItem(int pnum, int cii)
 {
+	printf("UseInvItem()\n");
+
 	int c, idata;
 	ItemStruct *Item;
 	BOOL speedlist;

@@ -1526,6 +1526,7 @@ void StartPlrBlock(int pnum, int dir)
 	SetPlayerOld(pnum);
 }
 
+// Ran when the player destination action is to cast a spell. Setup animations and player state.
 void StartSpell(int pnum, int d, int cx, int cy)
 {
 	if ((DWORD)pnum >= MAX_PLRS)
@@ -2841,6 +2842,7 @@ BOOL PM_DoBlock(int pnum)
 	return FALSE;
 }
 
+// Somewhere somehow it is here that scrolls are consumed
 BOOL PM_DoSpell(int pnum)
 {
 	if ((DWORD)pnum >= MAX_PLRS) {
@@ -2848,6 +2850,8 @@ BOOL PM_DoSpell(int pnum)
 	}
 
 	if (plr[pnum]._pVar8 == plr[pnum]._pSFNum) {
+		printf("plr[pnum]._pVar8 == plr[pnum]._pSFNum == %d\n", plr[pnum]._pSFNum);
+		printf("Num Scrolls BEFORE CastSpell: %d\n", GetNumOfSpellScrolls(plr[pnum]._pSpell));
 		CastSpell(
 		    pnum,
 		    plr[pnum]._pSpell,
@@ -2857,6 +2861,7 @@ BOOL PM_DoSpell(int pnum)
 		    plr[pnum]._pVar2,
 		    0,
 		    plr[pnum]._pVar4);
+		printf("Num Scrolls AFTER CastSpell: %d\n", GetNumOfSpellScrolls(plr[pnum]._pSpell));
 
 		if (!plr[pnum]._pSplFrom) {
 			if (plr[pnum]._pRSplType == RSPLTYPE_SCROLL) {
@@ -3157,6 +3162,9 @@ void CheckNewPath(int pnum)
 			StartRangeAttack(pnum, d, plr[i]._px, plr[i]._py);
 			break;
 		case ACTION_SPELL:
+
+			printf("CheckNewPath case ACTION_SPELL\n");
+
 			d = GetDirection(plr[pnum].WorldX, plr[pnum].WorldY, plr[pnum].destParam1, plr[pnum].destParam2);
 			StartSpell(pnum, d, plr[pnum].destParam1, plr[pnum].destParam2);
 			plr[pnum]._pVar4 = plr[pnum].destParam3;
@@ -3649,6 +3657,8 @@ void MakePlrPath(int pnum, int xx, int yy, BOOL endspace)
 
 void CheckPlrSpell()
 {
+	printf("CheckPlrSpell()\n");
+
 	BOOL addflag;
 	int rspell, sd, sl;
 
@@ -3657,6 +3667,8 @@ void CheckPlrSpell()
 	}
 
 	rspell = plr[myplr]._pRSpell;
+
+	// If the spell is invalid play sound effect and return from function
 	if (rspell == SPL_INVALID) {
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR34);
@@ -3670,6 +3682,7 @@ void CheckPlrSpell()
 		return;
 	}
 
+	// If the spell cant be used in town play sound effect and return from function
 	if (leveltype == DTYPE_TOWN && !spelldata[rspell].sTownSpell) {
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR27);
@@ -3695,6 +3708,7 @@ void CheckPlrSpell()
 		return;
 	}
 
+	// Check is spell is useable based on its type
 	addflag = FALSE;
 	switch (plr[myplr]._pRSplType) {
 	case RSPLTYPE_SKILL:
@@ -3709,6 +3723,7 @@ void CheckPlrSpell()
 		break;
 	}
 
+	// If spell is usable, send a network command and return from function
 	if (addflag) {
 		if (plr[myplr]._pRSpell == SPL_FIREWALL) {
 			sd = GetDirection(plr[myplr].WorldX, plr[myplr].WorldY, cursmx, cursmy);
@@ -3727,6 +3742,7 @@ void CheckPlrSpell()
 		return;
 	}
 
+	// If NOT usable, play sound effect before function end
 	if (plr[myplr]._pRSplType == RSPLTYPE_SPELL) {
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR35);

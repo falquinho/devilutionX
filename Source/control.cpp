@@ -248,14 +248,26 @@ bool IsItemSpellScroll(ItemStruct item, int spell_id) {
     return true;
 }
 
+int GetNumOfSpellScrolls(int spell_id) 
+{
+	int num_scrolls = 0;
+	for (int t = 0; t < plr[myplr]._pNumInv; t++) {
+		if (IsItemSpellScroll(plr[myplr].InvList[t], spell_id))
+			num_scrolls++;
+	}
+	for (int t = 0; t < MAXBELTITEMS; t++) {
+		if (IsItemSpellScroll(plr[myplr].SpdList[t], spell_id))
+			num_scrolls++;
+	}
+	return num_scrolls;
+}
+
 void SetSpellInfo(int spell_id, char type)
 {
 	if (type == RSPLTYPE_SKILL) {
-		printf("RSPLTYPE_SKILL\n");
 		sprintf(infostr, "%s Skill", spelldata[spell_id].sSkillText);
 
 	} else if (type == RSPLTYPE_SPELL) {
-		printf("RSPLTYPE_SPELL\n");
 		int spell_lvl = GetSpellLevel(myplr, spell_id);
 		sprintf(infostr, "%s Spell", spelldata[spell_id].sNameText);
 		if (spell_id == SPL_HBOLT) {
@@ -269,17 +281,8 @@ void SetSpellInfo(int spell_id, char type)
 		AddPanelString(tempstr, TRUE);
 
 	} else if (type == RSPLTYPE_SCROLL) {
-		printf("RSPLTYPE_SCROLL\n");
 		sprintf(infostr, "Scroll of %s", spelldata[spell_id].sNameText);
-		int num_scrolls = 0;
-		for (int t = 0; t < plr[myplr]._pNumInv; t++) {
-			if (IsItemSpellScroll(plr[myplr].InvList[t], spell_id))
-				num_scrolls++;
-		}
-		for (int t = 0; t < MAXBELTITEMS; t++) {
-			if (IsItemSpellScroll(plr[myplr].SpdList[t], spell_id))
-				num_scrolls++;
-		}
+		int num_scrolls = GetNumOfSpellScrolls(spell_id);
 		if (num_scrolls == 1)
 			strcpy(tempstr, "1 Scroll");
 		else
@@ -287,7 +290,6 @@ void SetSpellInfo(int spell_id, char type)
 		AddPanelString(tempstr, TRUE);
 		
 	} else if (type == RSPLTYPE_CHARGES) {
-		printf("RSPLTYPE_CHARGES\n");
 		sprintf(infostr, "Staff of %s", spelldata[pSpell].sNameText);
 		if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges == 1)
 			strcpy(tempstr, "1 Charge");

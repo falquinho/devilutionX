@@ -12,15 +12,16 @@ Rect spellbar_rect = {
     panel_rect.x + 71, panel_rect.y + 35, 244, 34
 };
 
-unsigned int quick_spells[5] = {
-    SPL_INVALID,
-    SPL_INVALID,
-    SPL_INVALID,
-    SPL_INVALID,
-    SPL_INVALID
+int quick_spells[6] = {
+    (int)SPL_INVALID,
+    (int)SPL_INVALID,
+    (int)SPL_INVALID,
+    (int)SPL_INVALID,
+    (int)SPL_INVALID,
+    (int)SPL_INVALID
 };
 
-char spells_type[5]  = {};
+char spells_type[5]  = {0, 0, 0, 0, 0, 0};
 
 
 bool CheckCursorOverModernSpellbar()
@@ -67,26 +68,17 @@ void DrawModernSpellbar()
 
     int x = spellbar_rect.x;
 	int y = panel_rect.y + panel_rect.h - 2;
-	for(int i = 0; i < 5; i++, x += 42) {
+	for(int i = 0; i < 6; i++, x += 42) {
         if(quick_spells[i] != SPL_INVALID)
             CelDraw(SCREEN_X + x, SCREEN_Y + y, spellicons_sm_cel, SpellITbl[quick_spells[i]], frame_size);
 		DrawString(x + 13, y - CHAR_H/2, hotkeys[i]);
 	}
-    if(plr[myplr]._pRSpell != SPL_INVALID)
-        CelDraw(SCREEN_X + x, SCREEN_Y + y, spellicons_sm_cel, SpellITbl[plr[myplr]._pRSpell], frame_size);
-    DrawString(x + 7, y - CHAR_H/2, hotkeys[5]);
 }
 
 void SpellbarSetSpell(int slot, int spell_id, char type)
 {
-    if(slot < 5) {
-        quick_spells[slot] = spell_id;
-        spells_type[slot]  = type;
-    } else if(slot == 5) {
-        plr[myplr]._pRSpell = spell_id;
-        plr[myplr]._pRSplType = type;
-    }
-
+    plr[myplr]._pRSpell = spell_id;
+    plr[myplr]._pRSplType = type;
 }
 
 void SpellbarCastSpell(int slot)
@@ -94,15 +86,10 @@ void SpellbarCastSpell(int slot)
     if (!quick_spells[slot])
         return;
 
-    int curr_spell = plr[myplr]._pRSpell;
-    char curr_type = plr[myplr]._pRSplType;
-    plr[myplr]._pRSpell = quick_spells[slot];
+    plr[myplr]._pRSpell   = quick_spells[slot];
     plr[myplr]._pRSplType = spells_type[slot];
+
     RightMouseDown();
-    quick_spells[slot] = plr[myplr]._pRSpell;
-    spells_type[slot] = plr[myplr]._pRSplType;
-    plr[myplr]._pRSpell = curr_spell;
-    plr[myplr]._pRSplType = curr_type;
 }
 
 DEVILUTION_END_NAMESPACE
