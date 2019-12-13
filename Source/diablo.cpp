@@ -3,6 +3,7 @@
 #include "../DiabloUI/diabloui.h"
 #include "../SourceX/modern_interface/modern_control_panel.h"
 #include "../SourceX/modern_interface/modern_spell_setter.h"
+#include "../SourceX/modern_interface/modern_spellbar.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -591,7 +592,10 @@ LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		MouseY = HIWORD(lParam);
 		if (sgbMouseDown == 0) {
 			sgbMouseDown = 2;
-			ModerPanelOnMouseBtnDown('r');
+			if(ModernPanelContainCurs())
+				ModerPanelOnMouseBtnDown('r');
+			else
+				SpellbarCastSpell(5);
 			// RightMouseDown();
 		}
 		return 0;
