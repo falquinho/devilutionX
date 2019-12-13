@@ -64,11 +64,17 @@ void PositionSpellsBoxes()
     scroll_spells_box.x = (SCREEN_WIDTH - scroll_spells_box.w) / 2;
     scroll_spells_box.y = known_spells_box.y - scroll_spells_box.h - 16;
 
-    class_skill_box.x = (SCREEN_WIDTH/2) - class_skill_box.w - 8;
-    class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
 
-    charge_spell_box.x = (SCREEN_WIDTH/2) + 8;
-    charge_spell_box.y = class_skill_box.y;
+    if(!charge_spell_box.w) {
+        class_skill_box.x = (SCREEN_WIDTH - class_skill_box.w) / 2;
+        class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
+    } else {
+        charge_spell_box.x = (SCREEN_WIDTH/2) + 8;
+        charge_spell_box.y = scroll_spells_box.y - class_skill_box.h - 16;
+        class_skill_box.x = (SCREEN_WIDTH/2) - class_skill_box.w - 8;
+        class_skill_box.y = charge_spell_box.y;
+    }
+
 }
 
 void OpenModernSpellSetter(int slot_index)
