@@ -1400,6 +1400,8 @@ void QuickSetItem()
 
 void CheckInvItem()
 {
+	printf("\n\nCheckInvItem\n\n");
+
 	int shift_state = GetAsyncKeyState(DVL_VK_SHIFT);
 	if(shift_state && pcurs < CURSOR_FIRSTITEM)
 		return QuickSetItem();

@@ -639,6 +639,8 @@ LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 BOOL LeftMouseDown(int wParam)
 {
+	printf("LeftMouseDown()\n");
+
 	if (!gmenu_left_mouse(TRUE) && !control_check_talk_btn() && !sgnTimeoutCurs) {
 		if (deathflag) {
 			control_check_btn_press();
@@ -656,6 +658,7 @@ BOOL LeftMouseDown(int wParam)
 			} else if (stextflag) {
 				CheckStoreBtn();
 			} else if (!ModernPanelContainCurs()) {
+				printf("\nModernPanel Does NOT contains cursor.\n");
 				if (!gmenu_exception() && !TryIconCurs()) {
 					if (questlog && MouseX > 32 && MouseX < 288 && MouseY > 32 && MouseY < 308) {
 						QuestlogESC();
@@ -682,8 +685,9 @@ BOOL LeftMouseDown(int wParam)
 					}
 				}
 			} else {
-				if (!talkflag && !dropGoldFlag && !gmenu_exception())
-					CheckInvScrn();
+				printf("\nModernPanel Does contains cursor.\n");
+				// if (!talkflag && !dropGoldFlag && !gmenu_exception())
+				// 	CheckInvScrn();
 
 				// DoPanBtn();
 				ModerPanelOnMouseBtnDown('l');
