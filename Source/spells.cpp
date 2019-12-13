@@ -54,31 +54,20 @@ int GetManaAmount(int id, int sn)
 
 void UseMana(int id, int sn)
 {
-	printf("UseMana()\n");
-
 	int ma; // mana cost
 
-	printf("id == %d, myplr == %d\n", id, myplr);
-	printf("plr[id]._pSplType == %d\n", plr[id]._pSplType);
 	if (id == myplr) {
 		switch (plr[id]._pSplType) {
 		case RSPLTYPE_SKILL:
 		case RSPLTYPE_INVALID:
-			printf("plr[id]._pSplType is RSPLTYPE_INVALID OR RSPLTYPE_SKILL\n");
 			break;
 		case RSPLTYPE_SCROLL:
-			printf("plr[id]._pSplType is RSPLTYPE_SCROLL\n");
-			printf("RSPLTYPE_SCROLL == %d\n", RSPLTYPE_SCROLL);
 			RemoveScroll(id);
 			break;
 		case RSPLTYPE_CHARGES:
-			printf("plr[id]._pSplType is RSPLTYPE_CHARGE\n");
-			printf("RSPLTYPE_CHARGES == %d\n", RSPLTYPE_CHARGES);
 			UseStaffCharge(id);
 			break;
 		case RSPLTYPE_SPELL:
-			printf("plr[id]._pSplType is RSPLTYPE_SPELL\n");
-			printf("RSPLTYPE_SPELL == %d\n", RSPLTYPE_SPELL);
 #ifdef _DEBUG
 			if (!debug_mode_key_inverted_v) {
 #endif
@@ -143,11 +132,7 @@ void CastSpell(int id, int spl, int sx, int sy, int dx, int dy, int caster, int 
 	}
 
 	for (i = 0; spelldata[spl].sMissiles[i] != MIS_ARROW && i < 3; i++) {
-		printf("Num Scrolls BEFORE AddMissile: %d\n", GetNumOfSpellScrolls(spl));
-
 		AddMissile(sx, sy, dx, dy, dir, spelldata[spl].sMissiles[i], caster, id, 0, spllvl);
-
-		printf("Num Scrolls AFTER AddMissile: %d\n", GetNumOfSpellScrolls(spl));
 	}
 
 	if (spelldata[spl].sMissiles[0] == MIS_TOWN) {

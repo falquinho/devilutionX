@@ -2850,8 +2850,6 @@ BOOL PM_DoSpell(int pnum)
 	}
 
 	if (plr[pnum]._pVar8 == plr[pnum]._pSFNum) {
-		printf("plr[pnum]._pVar8 == plr[pnum]._pSFNum == %d\n", plr[pnum]._pSFNum);
-		printf("Num Scrolls BEFORE CastSpell: %d\n", GetNumOfSpellScrolls(plr[pnum]._pSpell));
 		CastSpell(
 		    pnum,
 		    plr[pnum]._pSpell,
@@ -2861,7 +2859,6 @@ BOOL PM_DoSpell(int pnum)
 		    plr[pnum]._pVar2,
 		    0,
 		    plr[pnum]._pVar4);
-		printf("Num Scrolls AFTER CastSpell: %d\n", GetNumOfSpellScrolls(plr[pnum]._pSpell));
 
 		if (!plr[pnum]._pSplFrom) {
 			if (plr[pnum]._pRSplType == RSPLTYPE_SCROLL) {
@@ -3162,9 +3159,6 @@ void CheckNewPath(int pnum)
 			StartRangeAttack(pnum, d, plr[i]._px, plr[i]._py);
 			break;
 		case ACTION_SPELL:
-
-			printf("CheckNewPath case ACTION_SPELL\n");
-
 			d = GetDirection(plr[pnum].WorldX, plr[pnum].WorldY, plr[pnum].destParam1, plr[pnum].destParam2);
 			StartSpell(pnum, d, plr[pnum].destParam1, plr[pnum].destParam2);
 			plr[pnum]._pVar4 = plr[pnum].destParam3;
@@ -3657,8 +3651,6 @@ void MakePlrPath(int pnum, int xx, int yy, BOOL endspace)
 
 void CheckPlrSpell()
 {
-	printf("CheckPlrSpell()\n");
-
 	BOOL addflag;
 	int rspell, sd, sl;
 

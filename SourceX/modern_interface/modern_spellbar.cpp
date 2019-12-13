@@ -5,6 +5,7 @@
 #include "../Source/diablo.h"
 #include "../Source/control.h"
 #include "../Source/player.h"
+#include "../Source/inv.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -21,7 +22,7 @@ int quick_spells[6] = {
     (int)SPL_INVALID
 };
 
-char spells_type[5]  = {0, 0, 0, 0, 0, 0};
+char spells_type[6]  = {0, 0, 0, 0, 0, 0};
 
 
 bool CheckCursorOverModernSpellbar()
@@ -69,6 +70,11 @@ void DrawModernSpellbar()
     int x = spellbar_rect.x;
 	int y = panel_rect.y + panel_rect.h - 2;
 	for(int i = 0; i < 6; i++, x += 42) {
+        if(spells_type[i] == RSPLTYPE_SCROLL && !GetNumOfSpellScrolls(quick_spells[i]))
+            quick_spells[i] = SPL_INVALID;
+        else if(spells_type[i] == RSPLTYPE_CHARGES && !GetNumChargesEquippedStaff(quick_spells[i]))
+            quick_spells[i] = SPL_INVALID;
+        
         if(quick_spells[i] != SPL_INVALID)
             CelDraw(SCREEN_X + x, SCREEN_Y + y, spellicons_sm_cel, SpellITbl[quick_spells[i]], frame_size);
 		DrawString(x + 13, y - CHAR_H/2, hotkeys[i]);
@@ -77,13 +83,13 @@ void DrawModernSpellbar()
 
 void SpellbarSetSpell(int slot, int spell_id, char type)
 {
-    plr[myplr]._pRSpell = spell_id;
-    plr[myplr]._pRSplType = type;
+    quick_spells[slot] = spell_id;
+    spells_type[slot] = type;
 }
 
 void SpellbarCastSpell(int slot)
 {
-    if (!quick_spells[slot])
+    if (quick_spells[slot] == SPL_INVALID)
         return;
 
     plr[myplr]._pRSpell   = quick_spells[slot];

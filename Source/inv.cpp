@@ -2127,17 +2127,22 @@ void UseStaffCharge(int pnum)
 	}
 }
 
+int GetNumChargesEquippedStaff(int spell_id)
+{
+	if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._itype   != ITYPE_NONE  && 
+		plr[myplr].InvBody[INVLOC_HAND_LEFT]._iMiscId == IMISC_STAFF && 
+		plr[myplr].InvBody[INVLOC_HAND_LEFT]._iSpell  == spell_id
+	)
+		return plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges;
+
+	return 0;
+}
+
 // Check if the equipped spell can be used from the equipped staff.
 BOOL UseStaff()
 {
-	if (pcurs == CURSOR_HAND) {
-		if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
-		    && plr[myplr].InvBody[INVLOC_HAND_LEFT]._iMiscId == IMISC_STAFF
-		    && plr[myplr].InvBody[INVLOC_HAND_LEFT]._iSpell == plr[myplr]._pRSpell
-		    && plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
-			return TRUE;
-		}
-	}
+	if (pcurs == CURSOR_HAND)
+		return GetNumChargesEquippedStaff(plr[myplr]._pRSpell);
 
 	return FALSE;
 }
@@ -2157,8 +2162,6 @@ void StartGoldDrop()
 
 BOOL UseInvItem(int pnum, int cii)
 {
-	printf("UseInvItem()\n");
-
 	int c, idata;
 	ItemStruct *Item;
 	BOOL speedlist;

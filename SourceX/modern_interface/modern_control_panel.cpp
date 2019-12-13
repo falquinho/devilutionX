@@ -135,6 +135,8 @@ void ModerPanelOnMouseBtnDown(char btn)
 
 		else if(CheckCursorOverSpellSetter())
 			return OnClickSpellSetter();
+	} else if(btn == 'r') {
+		SpellbarCastSpell(5);
 	}
 }
 

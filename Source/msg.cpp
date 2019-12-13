@@ -1750,8 +1750,6 @@ DWORD On_RATTACKXY(TCmd *pCmd, int pnum)
 
 DWORD On_SPELLXYD(TCmd *pCmd, int pnum)
 {
-	printf("On_SPELLXYD()\n");
-
 	TCmdLocParam3 *p = (TCmdLocParam3 *)pCmd;
 
 	if (gbBufferMsgs != 1 && currlevel == plr[pnum].plrlevel) {
@@ -1776,10 +1774,6 @@ DWORD On_SPELLXYD(TCmd *pCmd, int pnum)
 // Sets the player destination action to be cast a spell in the destination(ACTION_SPELL)
 DWORD On_SPELLXY(TCmd *pCmd, int pnum)
 {
-	printf("On_SPELLXY()\n");
-	printf("pnum: %d\n", pnum);
-	printf("myplr: %d\n", myplr);
-
 	TCmdLocParam2 *p = (TCmdLocParam2 *)pCmd;
 
 	if (gbBufferMsgs != 1 && currlevel == plr[pnum].plrlevel) {
@@ -1791,8 +1785,6 @@ DWORD On_SPELLXY(TCmd *pCmd, int pnum)
 			plr[pnum].destParam3 = p->wParam2;
 			plr[pnum]._pSpell = p->wParam1;
 			plr[pnum]._pSplType = plr[pnum]._pRSplType;
-			printf("plr[pnum]._pRSplType = %d\n", plr[pnum]._pRSplType);
-			printf("plr[pnum]._pSplType = %d\n", plr[pnum]._pSplType);
 			plr[pnum]._pSplFrom = 0;
 		} else
 			msg_errorf("%s has cast an illegal spell.", plr[pnum]._pName);

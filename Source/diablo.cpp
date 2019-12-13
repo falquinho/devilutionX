@@ -591,7 +591,8 @@ LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		MouseY = HIWORD(lParam);
 		if (sgbMouseDown == 0) {
 			sgbMouseDown = 2;
-			RightMouseDown();
+			ModerPanelOnMouseBtnDown('r');
+			// RightMouseDown();
 		}
 		return 0;
 	case WM_RBUTTONUP:

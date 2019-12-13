@@ -3116,8 +3116,6 @@ void PrintItemDur(ItemStruct *x)
 
 void UseItem(int p, int Mid, int spl)
 {
-	printf("UseItem()\n");
-
 	int l, j;
 
 	switch (Mid) {
