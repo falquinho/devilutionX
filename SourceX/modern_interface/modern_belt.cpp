@@ -100,7 +100,9 @@ void OnLeftClickModernBelt()
 
 void OnRightClickModernBelt() 
 {
-    //
+    int index = GetBeltIndex(MouseX - belt_rect.x);
+    if(plr[myplr].SpdList[index]._itype != ITYPE_NONE)
+        UseInvItem(myplr, 47 + index);
 }
 
 DEVILUTION_END_NAMESPACE
