@@ -290,7 +290,7 @@ void SetSpellInfo(int spell_id, char type)
 		AddPanelString(tempstr, TRUE);
 		
 	} else if (type == RSPLTYPE_CHARGES) {
-		sprintf(infostr, "Staff of %s", spelldata[pSpell].sNameText);
+		sprintf(infostr, "Staff of %s", spelldata[spell_id].sNameText);
 		if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges == 1)
 			strcpy(tempstr, "1 Charge");
 		else

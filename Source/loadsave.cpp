@@ -4,6 +4,15 @@ DEVILUTION_BEGIN_NAMESPACE
 
 BYTE *tbuff;
 
+
+char spellbarSaveName[] = "spellbar_sav";
+void LoadSpellbar()
+{
+	DWORD buffLen;
+	BYTE* buffer;
+	buffer = pfile_read(spellbarSaveName, &buffLen);
+}
+
 void LoadGame(BOOL firstflag)
 {
 	int i, j;
@@ -794,6 +803,11 @@ void LoadPortal(int i)
 	CopyInt(tbuff, &pPortal->level);
 	CopyInt(tbuff, &pPortal->ltype);
 	CopyInt(tbuff, &pPortal->setlvl);
+}
+
+void SaveSpellbar()
+{
+	
 }
 
 void SaveGame()

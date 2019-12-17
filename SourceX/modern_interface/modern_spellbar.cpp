@@ -42,10 +42,7 @@ void OnCursorOverModernSpellbar()
 {
     int slot = (MouseX - spellbar_rect.x)/42;
 
-    if(slot >= 5 && plr[myplr]._pRSpell) {
-        pnumlines = 0;
-        SetSpellInfo(plr[myplr]._pRSpell, plr[myplr]._pRSplType);
-    } else if(quick_spells[slot] == SPL_INVALID) {
+    if(quick_spells[slot] == SPL_INVALID) {
         sprintf(infostr, "Spell slot #%d", slot + 1);
         sprintf(panelstr, "Click to set spell");
         pnumlines = 1;
