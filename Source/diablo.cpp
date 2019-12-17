@@ -595,8 +595,8 @@ LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if(ModernPanelContainCurs())
 				ModerPanelOnMouseBtnDown('r');
 			else
-				SpellbarCastSpell(5);
-			// RightMouseDown();
+				RightMouseDown();
+				// SpellbarCastSpell(5);
 		}
 		return 0;
 	case WM_RBUTTONUP:
@@ -839,7 +839,7 @@ void RightMouseDown()
 			) {
 				if (pcurs == 1) {
 					if (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))
-						CheckPlrSpell();
+						SpellbarCastSpell(5);
 				} else if (pcurs > 1 && pcurs < 12) {
 					SetCursor_(CURSOR_HAND);
 				}
@@ -1163,16 +1163,16 @@ void PressChar(int vkey)
 			}
 		}
 		return;
-	case 'Q':
-	case 'q':
-		// if (!stextflag) {
-		// 	chrflag = FALSE;
-		// 	if (!questlog) {
-		// 		StartQuestlog();
-		// 	} else {
-		// 		questlog = FALSE;
-		// 	}
-		// }
+	case 'U':
+	case 'u':
+		if (!stextflag) {
+			chrflag = FALSE;
+			if (!questlog) {
+				StartQuestlog();
+			} else {
+				questlog = FALSE;
+			}
+		}
 		return;
 	case 'Z':
 	case 'z':

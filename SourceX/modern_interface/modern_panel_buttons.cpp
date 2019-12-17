@@ -21,8 +21,8 @@ void OnCursorOverButtons()
 {
     static char labels[][64] = {
         "Character(C)",
-        "Quest(Q)",
-        "Map(M)",
+        "Quest(U)",
+        "Map(TAB)",
         "Inventory(I)",
         "Spellbook(B)",
         "Menu(Esc)",

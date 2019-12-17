@@ -38,6 +38,13 @@ bool CheckCursorOverModernSpellbar()
     return true;
 }
 
+int  GetSpellInSlot(int slot)
+{
+    if(slot < 0 || slot > 5)
+        return (int)SPL_INVALID;
+    return (int)quick_spells[slot];
+}
+
 void OnCursorOverModernSpellbar()
 {
     int slot = (MouseX - spellbar_rect.x)/42;
@@ -86,13 +93,10 @@ void SpellbarSetSpell(int slot, int spell_id, char type)
 
 void SpellbarCastSpell(int slot)
 {
-    if (quick_spells[slot] == SPL_INVALID)
-        return;
-
     plr[myplr]._pRSpell   = quick_spells[slot];
     plr[myplr]._pRSplType = spells_type[slot];
 
-    RightMouseDown();
+    CheckPlrSpell();
 }
 
 DEVILUTION_END_NAMESPACE

@@ -7,6 +7,8 @@ DEVILUTION_BEGIN_NAMESPACE
 
 bool CheckCursorOverModernSpellbar();
 
+int  GetSpellInSlot(int slot);
+
 void OnCursorOverModernSpellbar();
 
 void OnClickModernSpellbar();
