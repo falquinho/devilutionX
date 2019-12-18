@@ -294,8 +294,10 @@ void CheckCursMove()
 		return;
 	} 
 	// if not in the inv panel, clear any residual comparison info
-	else
+	else {
 		ClearComparisonInfo();
+		SetExtraInfo("");
+	}
 
 	//allows clicking below spellbook panel
 	if (sbookflag && MouseX > SCREEN_WIDTH - 320 && MouseY < 352) {

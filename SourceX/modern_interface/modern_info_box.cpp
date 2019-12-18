@@ -8,6 +8,8 @@ DEVILUTION_BEGIN_NAMESPACE
 
 char compare_info[MAX_COMPARE_LINES][128] = {"", "", "", "", "", "", ""};
 
+char extra_info[64] = "";
+
 char compare_loc = NUM_INVLOC;
 
 
@@ -63,10 +65,14 @@ void DrawModernInfoBox()
     if(pcursmonst >= 0 &&  leveltype != DTYPE_TOWN)
         return DrawMonsterInfo();
 
+    int num_lines = 1 + pnumlines + (extra_info[0] == '\0'? 0 : 1);
     Rect box_rect;
     
-    box_rect.h = ((1 + pnumlines) * CHAR_H) + 4;
-    box_rect.w = strlen(infostr) * CHAR_W;
+    box_rect.h = (num_lines * CHAR_H) + 4;
+    if(strlen(extra_info) > strlen(infostr))
+        box_rect.w = strlen(extra_info) * CHAR_W;
+    else
+        box_rect.w = strlen(infostr) * CHAR_W;
 
     int i;
     for (i = 0; i < pnumlines; i++) {
@@ -82,11 +88,18 @@ void DrawModernInfoBox()
     DrawRectangle(box_rect, PAL16_GRAY + 15, false);
 
     int offset = (box_rect.w - strlen(infostr) * CHAR_W)/2;
-    DrawString(box_rect.x + offset, box_rect.y + 2, infostr);
+    int line_y = box_rect.y + 2;
+    DrawString(box_rect.x + offset, line_y, infostr);
+    line_y += CHAR_H;
 
-    for (i = 0; i < pnumlines; i++) {
+    for (i = 0; i < pnumlines; i++, line_y += CHAR_H) {
         offset = (box_rect.w - strlen(&panelstr[64 * i]) * CHAR_W)/2;
-        DrawString(box_rect.x + offset, box_rect.y + 2 + ((i + 1) * CHAR_H), &panelstr[64 * i]);
+        DrawString(box_rect.x + offset, line_y, &panelstr[64 * i]);
+    }
+
+    if(extra_info[0] != '\0') {
+        offset = (box_rect.w - strlen(extra_info) * CHAR_W) / 2;
+        DrawString(box_rect.x + offset, line_y, extra_info);
     }
 
     if(compare_info[0][0] != '\0' && pcurs == CURSOR_HAND)
@@ -184,6 +197,11 @@ void SetCompareEquipmentInfo(ItemStruct item)
 			sprintf(tempstr, "%s %i Dex", tempstr, target_item._iMinDex);
 		sprintf(&compare_info[curr_line][0], tempstr);
 	}
+}
+
+void SetExtraInfo(char* extra)
+{
+    strcpy(extra_info, extra);
 }
 
 DEVILUTION_END_NAMESPACE
