@@ -24,6 +24,7 @@ int quick_spells[6] = {
 
 char spells_type[6]  = {0, 0, 0, 0, 0, 0};
 
+char hotkeys[6][4] = {"Q", "W", "E", "R", "T", "RMB"};
 
 bool CheckCursorOverModernSpellbar()
 {
@@ -51,8 +52,9 @@ void OnCursorOverModernSpellbar()
 
     if(quick_spells[slot] == SPL_INVALID) {
         sprintf(infostr, "Spell slot #%d", slot + 1);
-        sprintf(panelstr, "Click to set spell");
-        pnumlines = 1;
+        sprintf(&panelstr[00], "Left click or Shift + %s", hotkeys[slot]);
+        sprintf(&panelstr[64], "to set spell");
+        pnumlines = 2;
     } else {
         pnumlines = 0;
         SetSpellInfo(quick_spells[slot], spells_type[slot]);
@@ -68,8 +70,6 @@ void OnClickModernSpellbar()
 void DrawModernSpellbar()
 {
     static int frame_size = 34;
-
-    static char hotkeys[6][4] = {"Q", "W", "E", "R", "T", "RMB"};
 
     int x = spellbar_rect.x;
 	int y = panel_rect.y + panel_rect.h - 2;
