@@ -91,13 +91,18 @@ void UseFirstPotion(bool life_pot)
 
 void OnLeftClickModernBelt()
 {
-    int index = GetBeltIndex(MouseX - belt_rect.x);
-
     if (pcurs >= CURSOR_FIRSTITEM) {
-		CheckInvPaste(myplr, MouseX, MouseY - 49);
+		CheckInvPaste(myplr, MouseX, MouseY - 45);
 	} else {
-		CheckInvCut(myplr, MouseX, MouseY - 49);
+		CheckInvCut(myplr, MouseX, MouseY - 45);
 	}
+}
+
+void OnRightClickModernBelt() 
+{
+    int index = GetBeltIndex(MouseX - belt_rect.x);
+    if(plr[myplr].SpdList[index]._itype != ITYPE_NONE)
+        UseInvItem(myplr, 47 + index);
 }
 
 DEVILUTION_END_NAMESPACE

@@ -1,4 +1,5 @@
 #include "diablo.h"
+#include "../SourceX/modern_interface/modern_spellbar.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 

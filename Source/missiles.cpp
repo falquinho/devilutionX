@@ -239,6 +239,7 @@ int FindClosest(int sx, int sy, int rad)
 	return -1;
 }
 
+// Get the 'sn' spell level of the player 'id'.
 int GetSpellLevel(int id, int sn)
 {
 	int result;
@@ -2266,9 +2267,12 @@ void AddFlamec(int mi, int sx, int sy, int dx, int dy, int midir, char mienemy, 
 		dx += XDirAdd[midir];
 		dy += YDirAdd[midir];
 	}
+
 	GetMissileVel(mi, sx, sy, dx, dy, 32);
-	if (!mienemy)
+
+	if (!mienemy) {
 		UseMana(id, SPL_FLAME);
+	}
 	missile[mi]._miVar1 = sx;
 	missile[mi]._miVar2 = sy;
 	missile[mi]._miVar3 = 0;
@@ -2444,6 +2448,8 @@ int AddMissile(int sx, int sy, int dx, int dy, int midir, int mitype, char micas
 	missile[mi]._mispllvl = spllvl;
 	missile[mi]._mimfnum = midir;
 
+
+
 	if (missile[mi]._miAnimType == 255 || misfiledata[missile[mi]._miAnimType].mAnimFAmt < 8)
 		SetMissDir(mi, 0);
 	else
@@ -2473,6 +2479,7 @@ int AddMissile(int sx, int sy, int dx, int dy, int midir, int mitype, char micas
 	}
 
 	missiledata[mitype].mAddProc(mi, sx, sy, dx, dy, midir, micaster, id, midam);
+
 
 	return mi;
 }

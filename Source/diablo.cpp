@@ -3,6 +3,7 @@
 #include "../DiabloUI/diabloui.h"
 #include "../SourceX/modern_interface/modern_control_panel.h"
 #include "../SourceX/modern_interface/modern_spell_setter.h"
+#include "../SourceX/modern_interface/modern_spellbar.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -492,6 +493,10 @@ BOOL PressEscKey()
 		chrflag = 0;
 		rv = TRUE;
 	}
+	if(IsSpellSetterOpen()) {
+		CloseModernSpellSetter();
+		rv = TRUE;
+	}
 
 	return rv;
 }
@@ -587,7 +592,11 @@ LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		MouseY = HIWORD(lParam);
 		if (sgbMouseDown == 0) {
 			sgbMouseDown = 2;
-			RightMouseDown();
+			if(ModernPanelContainCurs())
+				ModerPanelOnMouseBtnDown('r');
+			else
+				RightMouseDown();
+				// SpellbarCastSpell(5);
 		}
 		return 0;
 	case WM_RBUTTONUP:
@@ -634,16 +643,17 @@ LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 BOOL LeftMouseDown(int wParam)
 {
+	printf("LeftMouseDown()\n");
+
 	if (!gmenu_left_mouse(TRUE) && !control_check_talk_btn() && !sgnTimeoutCurs) {
 		if (deathflag) {
 			control_check_btn_press();
 		} else if (PauseMode != 2) {
 
-			if(CheckCursorOverSpellSetter()) {
-				OnClickSpellSetter();
-				return TRUE;
-			} else
+			if(IsSpellSetterOpen() && !CheckCursorOverSpellSetter()) {
 				CloseModernSpellSetter();
+				return TRUE;
+			}
 
 			if (doomflag) {
 				doom_close();
@@ -652,6 +662,7 @@ BOOL LeftMouseDown(int wParam)
 			} else if (stextflag) {
 				CheckStoreBtn();
 			} else if (!ModernPanelContainCurs()) {
+				printf("\nModernPanel Does NOT contains cursor.\n");
 				if (!gmenu_exception() && !TryIconCurs()) {
 					if (questlog && MouseX > 32 && MouseX < 288 && MouseY > 32 && MouseY < 308) {
 						QuestlogESC();
@@ -678,8 +689,9 @@ BOOL LeftMouseDown(int wParam)
 					}
 				}
 			} else {
-				if (!talkflag && !dropGoldFlag && !gmenu_exception())
-					CheckInvScrn();
+				printf("\nModernPanel Does contains cursor.\n");
+				// if (!talkflag && !dropGoldFlag && !gmenu_exception())
+				// 	CheckInvScrn();
 
 				// DoPanBtn();
 				ModerPanelOnMouseBtnDown('l');
@@ -819,13 +831,15 @@ void RightMouseDown()
 		} else if (!stextflag) {
 			if (spselflag) {
 				SetSpell();
-			} else if (MouseY >= 352
-			    || (!sbookflag || (MouseX <= SCREEN_WIDTH - 320))
-			        && !TryIconCurs()
-			        && (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))) {
+			} else if (
+				ModernPanelContainCurs() || 
+				(!sbookflag || (MouseX <= SCREEN_WIDTH - 320)) && 
+				!TryIconCurs() && 
+				(pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))
+			) {
 				if (pcurs == 1) {
 					if (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))
-						CheckPlrSpell();
+						SpellbarCastSpell(5);
 				} else if (pcurs > 1 && pcurs < 12) {
 					SetCursor_(CURSOR_HAND);
 				}
@@ -1149,8 +1163,8 @@ void PressChar(int vkey)
 			}
 		}
 		return;
-	case 'Q':
-	case 'q':
+	case 'U':
+	case 'u':
 		if (!stextflag) {
 			chrflag = FALSE;
 			if (!questlog) {
@@ -1166,15 +1180,15 @@ void PressChar(int vkey)
 		return;
 	case 'S':
 	case 's':
-		if (!stextflag) {
-			invflag = 0;
-			if (!spselflag) {
-				DoSpeedBook();
-			} else {
-				spselflag = 0;
-			}
-			track_repeat_walk(0);
-		}
+		// if (!stextflag) {
+		// 	invflag = 0;
+		// 	if (!spselflag) {
+		// 		DoSpeedBook();
+		// 	} else {
+		// 		spselflag = 0;
+		// 	}
+		// 	track_repeat_walk(0);
+		// }
 		return;
 	case 'B':
 	case 'b':
@@ -1322,12 +1336,12 @@ void PressChar(int vkey)
 		return;
 	case 'R':
 	case 'r':
-		sprintf(tempstr, "seed = %i", glSeedTbl[currlevel]);
-		NetSendCmdString(1 << myplr, tempstr);
-		sprintf(tempstr, "Mid1 = %i : Mid2 = %i : Mid3 = %i", glMid1Seed[currlevel], glMid2Seed[currlevel], glMid3Seed[currlevel]);
-		NetSendCmdString(1 << myplr, tempstr);
-		sprintf(tempstr, "End = %i", glEndSeed[currlevel]);
-		NetSendCmdString(1 << myplr, tempstr);
+		// sprintf(tempstr, "seed = %i", glSeedTbl[currlevel]);
+		// NetSendCmdString(1 << myplr, tempstr);
+		// sprintf(tempstr, "Mid1 = %i : Mid2 = %i : Mid3 = %i", glMid1Seed[currlevel], glMid2Seed[currlevel], glMid3Seed[currlevel]);
+		// NetSendCmdString(1 << myplr, tempstr);
+		// sprintf(tempstr, "End = %i", glEndSeed[currlevel]);
+		// NetSendCmdString(1 << myplr, tempstr);
 		return;
 	case 'T':
 	case 't':

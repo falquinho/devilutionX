@@ -1,6 +1,8 @@
 #include "modern_spell_setter.h"
 #include "modern_control_panel.h"
+#include "modern_spellbar.h"
 #include "../Source/spells.h"
+#include "../Source/control.h"
 #include "utils.h"
 
 DEVILUTION_BEGIN_NAMESPACE
@@ -24,6 +26,8 @@ Rect scroll_spells_box = {0, 0, 0, 0};
 
 int known_spells[MAX_SPELLS]  = {};
 Rect known_spells_box = {0, 0, 0, 0};
+
+char spell_setter_title[128];
 
 
 void SetSpells(unsigned long long int mask, int *spells)
@@ -60,6 +64,7 @@ void PositionSpellsBoxes()
     scroll_spells_box.x = (SCREEN_WIDTH - scroll_spells_box.w) / 2;
     scroll_spells_box.y = known_spells_box.y - scroll_spells_box.h - 16;
 
+<<<<<<< HEAD
 	if(charge_spell_box.w > 0) {
 		class_skill_box.x = (SCREEN_WIDTH/2) - class_skill_box.w - 8;
 		class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
@@ -70,11 +75,24 @@ void PositionSpellsBoxes()
 		class_skill_box.x = (SCREEN_WIDTH - class_skill_box.w) / 2;
 		class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
 	}
+=======
+
+    if(!charge_spell_box.w) {
+        class_skill_box.x = (SCREEN_WIDTH - class_skill_box.w) / 2;
+        class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
+    } else {
+        charge_spell_box.x = (SCREEN_WIDTH/2) + 8;
+        charge_spell_box.y = scroll_spells_box.y - class_skill_box.h - 16;
+        class_skill_box.x = (SCREEN_WIDTH/2) - class_skill_box.w - 8;
+        class_skill_box.y = charge_spell_box.y;
+    }
+
+>>>>>>> d4153f4192bf3a9f7a0680619f318c3017e238ad
 }
 
-void OpenModernSpellSetter(int spell_index)
+void OpenModernSpellSetter(int slot_index)
 {
-    target_spell_slot = spell_index;
+    target_spell_slot = slot_index;
     SetSpells(plr[myplr]._pAblSpells,  &class_skill[0]);
     SetSpells(plr[myplr]._pMemSpells,  &known_spells[0]);
     SetSpells(plr[myplr]._pScrlSpells, &scroll_spells[0]);
@@ -86,6 +104,8 @@ void OpenModernSpellSetter(int spell_index)
     SetSpellsBoundingBoxSizes(&charge_spell[0], &charge_spell_box);
 
     PositionSpellsBoxes();
+
+    sprintf(&spell_setter_title[0], "SET SLOT #%d SPELL:", slot_index+1);
 }
 
 void CloseModernSpellSetter()
@@ -100,13 +120,6 @@ bool IsSpellSetterOpen()
 
 void DrawSpellsRow(char *label, int spells[], Rect box)
 {
-    static char SpellITbl[MAX_SPELLS] = {
-        1, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-        28, 13, 12, 18, 16, 14, 18, 19, 11, 20,
-        15, 21, 23, 24, 25, 22, 26, 29, 37, 38,
-        39, 42, 41, 40, 10, 36, 30
-    };
-
     if(!box.w)
         return;
 
@@ -139,6 +152,11 @@ void DrawModernSpellSetter()
     DrawSpellsRow("Scrolls", scroll_spells, scroll_spells_box);
     DrawSpellsRow("Item",    charge_spell,  charge_spell_box);
     DrawSpellsRow("Skill",   class_skill,   class_skill_box);
+
+    Rect title_bkg = {0, class_skill_box.y - 40, (strlen(spell_setter_title) * CHAR_W) + 8, CHAR_H + 8};
+    title_bkg.x = (SCREEN_WIDTH - title_bkg.w) / 2;
+    DrawRectangle(title_bkg, PAL16_GRAY + 15, true);
+    DrawString(title_bkg.x + 4, title_bkg.y + 2, spell_setter_title);
 }
 
 
@@ -158,12 +176,6 @@ bool CheckCursorOverSpellSetter()
     return false;
 }
 
-bool IsItemSpellScroll(ItemStruct item, int spell_id) {
-    if(item._itype == ITYPE_NONE) return false;
-    if(item._iMiscId != IMISC_SCROLL && item._iMiscId != IMISC_SCROLLT) return false;
-    if(item._iSpell != spell_id) return false;
-    return true;
-}
 
 int CursPosToArrayIndex(Rect rect)
 {
@@ -175,30 +187,22 @@ int CursPosToArrayIndex(Rect rect)
 void OnCursorOverSpellSetter()
 {
     if(CoordInsideRect(MouseX, MouseY, class_skill_box)) {
-        sprintf(infostr, "%s Skill", spelldata[class_skill[0]].sSkillText);
+        pnumlines = 0;
+        SetSpellInfo(class_skill[0], RSPLTYPE_SKILL);
     }
     else if(CoordInsideRect(MouseX, MouseY, scroll_spells_box )) {
+        pnumlines = 0;
         int index = CursPosToArrayIndex(scroll_spells_box);
-        sprintf(infostr, "Scroll of %s", spelldata[scroll_spells[index]].sNameText);
-        int num_scrolls = 0;
-        for(int i = 0; i < plr[myplr]._pNumInv; i++) {
-            if(IsItemSpellScroll(plr[myplr].InvList[i], scroll_spells[index]))
-                num_scrolls++;
-        }
-        for (int i = 0; i < MAXBELTITEMS; i++) {
-            if(IsItemSpellScroll(plr[myplr].SpdList[i], scroll_spells[index]))
-                num_scrolls++;
-        }
-        sprintf(&panelstr[0], "%d scroll(s)", num_scrolls);
-        pnumlines = 1;
+        SetSpellInfo(scroll_spells[index], RSPLTYPE_SCROLL);
     }
     else if(CoordInsideRect(MouseX, MouseY, charge_spell_box)) {
-        sprintf(infostr, "Staff of %s", spelldata[charge_spell[0]].sNameText);
-        sprintf(&panelstr[0], "%i Charge(s)", plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges);
-        pnumlines = 1;
+        pnumlines = 0;
+        SetSpellInfo(charge_spell[0], RSPLTYPE_CHARGES);
     }
     else if(CoordInsideRect(MouseX, MouseY, known_spells_box)) {
+        pnumlines = 0;
         int index = CursPosToArrayIndex(known_spells_box);
+<<<<<<< HEAD
         int slvl  = plr[myplr]._pISplLvlAdd + plr[myplr]._pSplLvl[known_spells[index]];
         slvl = slvl < 0? 0 : slvl;
         sprintf(infostr, "Lvl %d %s", slvl, spelldata[known_spells[index]].sNameText);
@@ -216,12 +220,30 @@ void OnCursorOverSpellSetter()
 			sprintf(&panelstr[64], "Damages undead only");
 			pnumlines++;
 		}
+=======
+        SetSpellInfo(known_spells[index], RSPLTYPE_SPELL);
+>>>>>>> d4153f4192bf3a9f7a0680619f318c3017e238ad
     }
 }
 
 void OnClickSpellSetter()
 {
-
+    int spell_index;
+    if(CoordInsideRect(MouseX, MouseY, class_skill_box)) {
+        SpellbarSetSpell(target_spell_slot, class_skill[0], RSPLTYPE_SKILL);
+    }
+    else if(CoordInsideRect(MouseX, MouseY, scroll_spells_box)) {
+        spell_index = CursPosToArrayIndex(scroll_spells_box);
+        SpellbarSetSpell(target_spell_slot, scroll_spells[spell_index], RSPLTYPE_SCROLL);
+    }
+    else if(CoordInsideRect(MouseX, MouseY, charge_spell_box)) {
+        SpellbarSetSpell(target_spell_slot, charge_spell[0], RSPLTYPE_CHARGES);
+    }
+    else if(CoordInsideRect(MouseX, MouseY, known_spells_box)) {
+        spell_index = CursPosToArrayIndex(known_spells_box);
+        SpellbarSetSpell(target_spell_slot, known_spells[spell_index], RSPLTYPE_SPELL);
+    }
+    CloseModernSpellSetter();
 }
 
 DEVILUTION_END_NAMESPACE

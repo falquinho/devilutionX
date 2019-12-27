@@ -83,6 +83,8 @@ void UseMana(int id, int sn)
 	}
 }
 
+// Check if a Spell is useable based on its level, mana cost and if theres's already something
+// ready to be cast, indicated by the cursor id.
 BOOL CheckSpell(int id, int sn, char st, BOOL manaonly)
 {
 	BOOL result;

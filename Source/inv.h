@@ -39,6 +39,7 @@ char CheckInvHLight();
 void RemoveScroll(int pnum);
 BOOL UseScroll();
 void UseStaffCharge(int pnum);
+int GetNumChargesEquippedStaff(int spell_id);
 BOOL UseStaff();
 void StartGoldDrop();
 BOOL UseInvItem(int pnum, int cii);

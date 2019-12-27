@@ -1,4 +1,5 @@
 #include "diablo.h"
+#include "../SourceX/modern_interface/modern_control_panel.h"
 
 DEVILUTION_BEGIN_NAMESPACE
 
@@ -1525,6 +1526,7 @@ void StartPlrBlock(int pnum, int dir)
 	SetPlayerOld(pnum);
 }
 
+// Ran when the player destination action is to cast a spell. Setup animations and player state.
 void StartSpell(int pnum, int d, int cx, int cy)
 {
 	if ((DWORD)pnum >= MAX_PLRS)
@@ -2840,6 +2842,7 @@ BOOL PM_DoBlock(int pnum)
 	return FALSE;
 }
 
+// Somewhere somehow it is here that scrolls are consumed
 BOOL PM_DoSpell(int pnum)
 {
 	if ((DWORD)pnum >= MAX_PLRS) {
@@ -2859,8 +2862,7 @@ BOOL PM_DoSpell(int pnum)
 
 		if (!plr[pnum]._pSplFrom) {
 			if (plr[pnum]._pRSplType == RSPLTYPE_SCROLL) {
-				if (!(plr[pnum]._pScrlSpells
-				        & (unsigned __int64)1 << (plr[pnum]._pRSpell - 1))) {
+				if (!(plr[pnum]._pScrlSpells & (unsigned __int64)1 << (plr[pnum]._pRSpell - 1))) {
 					plr[pnum]._pRSpell = SPL_INVALID;
 					plr[pnum]._pRSplType = RSPLTYPE_INVALID;
 					drawpanflag = 255;
@@ -2868,8 +2870,7 @@ BOOL PM_DoSpell(int pnum)
 			}
 
 			if (plr[pnum]._pRSplType == RSPLTYPE_CHARGES) {
-				if (!(plr[pnum]._pISpells
-				        & (unsigned __int64)1 << (plr[pnum]._pRSpell - 1))) {
+				if (!(plr[pnum]._pISpells & (unsigned __int64)1 << (plr[pnum]._pRSpell - 1))) {
 					plr[pnum]._pRSpell = SPL_INVALID;
 					plr[pnum]._pRSplType = RSPLTYPE_INVALID;
 					drawpanflag = 255;
@@ -3658,6 +3659,8 @@ void CheckPlrSpell()
 	}
 
 	rspell = plr[myplr]._pRSpell;
+
+	// If the spell is invalid play sound effect and return from function
 	if (rspell == SPL_INVALID) {
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR34);
@@ -3671,6 +3674,7 @@ void CheckPlrSpell()
 		return;
 	}
 
+	// If the spell cant be used in town play sound effect and return from function
 	if (leveltype == DTYPE_TOWN && !spelldata[rspell].sTownSpell) {
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR27);
@@ -3684,8 +3688,9 @@ void CheckPlrSpell()
 		return;
 	}
 
-	if (pcurs != CURSOR_HAND
-	    || (MouseY >= PANEL_TOP && MouseX >= WIDTH_DIFF_2 && MouseX <= SCREEN_WIDTH - WIDTH_DIFF_2)
+	if (
+		pcurs != CURSOR_HAND
+	    || ModernPanelContainCurs()
 	    || ((chrflag && MouseX < 320 && MouseY < 352) || ((invflag || sbookflag) && MouseX > SCREEN_WIDTH - 320 && MouseY < 352))
 	        && rspell != SPL_HEAL
 	        && rspell != SPL_IDENTIFY
@@ -3695,6 +3700,7 @@ void CheckPlrSpell()
 		return;
 	}
 
+	// Check is spell is useable based on its type
 	addflag = FALSE;
 	switch (plr[myplr]._pRSplType) {
 	case RSPLTYPE_SKILL:
@@ -3709,6 +3715,7 @@ void CheckPlrSpell()
 		break;
 	}
 
+	// If spell is usable, send a network command and return from function
 	if (addflag) {
 		if (plr[myplr]._pRSpell == SPL_FIREWALL) {
 			sd = GetDirection(plr[myplr].WorldX, plr[myplr].WorldY, cursmx, cursmy);
@@ -3727,6 +3734,7 @@ void CheckPlrSpell()
 		return;
 	}
 
+	// If NOT usable, play sound effect before function end
 	if (plr[myplr]._pRSplType == RSPLTYPE_SPELL) {
 		if (plr[myplr]._pClass == PC_WARRIOR) {
 			PlaySFX(PS_WARR35);

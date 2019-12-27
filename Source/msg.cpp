@@ -1770,6 +1770,8 @@ DWORD On_SPELLXYD(TCmd *pCmd, int pnum)
 	return sizeof(*p);
 }
 
+// Callback to execute when receive a CMD_SPELLXY command
+// Sets the player destination action to be cast a spell in the destination(ACTION_SPELL)
 DWORD On_SPELLXY(TCmd *pCmd, int pnum)
 {
 	TCmdLocParam2 *p = (TCmdLocParam2 *)pCmd;

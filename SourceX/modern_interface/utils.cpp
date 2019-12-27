@@ -3,10 +3,6 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-int char_w = 6;
-int line_h = 12;
-
-
 void SetPixel(int sx, int sy, BYTE col)
 {
 	if (sy < 0 || sy >= SCREEN_HEIGHT + SCREEN_Y || sx < SCREEN_X || sx >= SCREEN_WIDTH + SCREEN_X)
@@ -35,7 +31,7 @@ void DrawRectangle(Rect rect, BYTE color, bool dither)
 void DrawChar(int x, int y, char c)
 {
 	int frame = (c - 31) < 1? 1 : (c - 31);
-	CelDraw(SCREEN_X + x, SCREEN_Y + y + line_h, ascii_charmap_cel, frame, char_w);
+	CelDraw(SCREEN_X + x, SCREEN_Y + y + CHAR_H, ascii_charmap_cel, frame, CHAR_W);
 }
 
 
@@ -44,11 +40,11 @@ void DrawString(int x, int y, char* str)
 	int curr_col  = 0;
 	for(int i = 0; str[i] != '\0'; i++, curr_col++) {
 		if(str[i] == '\n') {
-			y += line_h;
+			y += CHAR_H;
 			curr_col = -1;
 			continue;
 		}
-		int curr_x = x + (curr_col * char_w);
+		int curr_x = x + (curr_col * CHAR_W);
 		DrawChar(curr_x, y, str[i]);
 	}
 }

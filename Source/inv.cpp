@@ -1400,6 +1400,8 @@ void QuickSetItem()
 
 void CheckInvItem()
 {
+	printf("\n\nCheckInvItem\n\n");
+
 	int shift_state = GetAsyncKeyState(DVL_VK_SHIFT);
 	if(shift_state && pcurs < CURSOR_FIRSTITEM)
 		return QuickSetItem();
@@ -2087,6 +2089,7 @@ void RemoveScroll(int pnum)
 	}
 }
 
+// Check if the equipped spell can be used from a scroll.
 BOOL UseScroll()
 {
 	int i;
@@ -2114,6 +2117,7 @@ BOOL UseScroll()
 	return FALSE;
 }
 
+// Acctualy consume the chage of the equipped staff if possible.
 void UseStaffCharge(int pnum)
 {
 	if (plr[pnum].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
@@ -2125,16 +2129,22 @@ void UseStaffCharge(int pnum)
 	}
 }
 
+int GetNumChargesEquippedStaff(int spell_id)
+{
+	if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._itype   != ITYPE_NONE  && 
+		plr[myplr].InvBody[INVLOC_HAND_LEFT]._iMiscId == IMISC_STAFF && 
+		plr[myplr].InvBody[INVLOC_HAND_LEFT]._iSpell  == spell_id
+	)
+		return plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges;
+
+	return 0;
+}
+
+// Check if the equipped spell can be used from the equipped staff.
 BOOL UseStaff()
 {
-	if (pcurs == CURSOR_HAND) {
-		if (plr[myplr].InvBody[INVLOC_HAND_LEFT]._itype != ITYPE_NONE
-		    && plr[myplr].InvBody[INVLOC_HAND_LEFT]._iMiscId == IMISC_STAFF
-		    && plr[myplr].InvBody[INVLOC_HAND_LEFT]._iSpell == plr[myplr]._pRSpell
-		    && plr[myplr].InvBody[INVLOC_HAND_LEFT]._iCharges > 0) {
-			return TRUE;
-		}
-	}
+	if (pcurs == CURSOR_HAND)
+		return GetNumChargesEquippedStaff(plr[myplr]._pRSpell);
 
 	return FALSE;
 }

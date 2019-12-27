@@ -7,11 +7,17 @@ DEVILUTION_BEGIN_NAMESPACE
 
 bool CheckCursorOverModernSpellbar();
 
+int  GetSpellInSlot(int slot);
+
 void OnCursorOverModernSpellbar();
 
 void OnClickModernSpellbar();
 
 void DrawModernSpellbar();
+
+void SpellbarSetSpell(int slot, int spell_id, char type);
+
+void SpellbarCastSpell(int slot);
 
 DEVILUTION_END_NAMESPACE
 
