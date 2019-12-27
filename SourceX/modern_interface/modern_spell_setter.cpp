@@ -64,18 +64,6 @@ void PositionSpellsBoxes()
     scroll_spells_box.x = (SCREEN_WIDTH - scroll_spells_box.w) / 2;
     scroll_spells_box.y = known_spells_box.y - scroll_spells_box.h - 16;
 
-<<<<<<< HEAD
-	if(charge_spell_box.w > 0) {
-		class_skill_box.x = (SCREEN_WIDTH/2) - class_skill_box.w - 8;
-		class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
-
-		charge_spell_box.x = (SCREEN_WIDTH/2) + 8;
-		charge_spell_box.y = class_skill_box.y;
-	} else {
-		class_skill_box.x = (SCREEN_WIDTH - class_skill_box.w) / 2;
-		class_skill_box.y = scroll_spells_box.y - class_skill_box.h - 16;
-	}
-=======
 
     if(!charge_spell_box.w) {
         class_skill_box.x = (SCREEN_WIDTH - class_skill_box.w) / 2;
@@ -87,7 +75,6 @@ void PositionSpellsBoxes()
         class_skill_box.y = charge_spell_box.y;
     }
 
->>>>>>> d4153f4192bf3a9f7a0680619f318c3017e238ad
 }
 
 void OpenModernSpellSetter(int slot_index)
@@ -202,27 +189,7 @@ void OnCursorOverSpellSetter()
     else if(CoordInsideRect(MouseX, MouseY, known_spells_box)) {
         pnumlines = 0;
         int index = CursPosToArrayIndex(known_spells_box);
-<<<<<<< HEAD
-        int slvl  = plr[myplr]._pISplLvlAdd + plr[myplr]._pSplLvl[known_spells[index]];
-        slvl = slvl < 0? 0 : slvl;
-        sprintf(infostr, "Lvl %d %s", slvl, spelldata[known_spells[index]].sNameText);
-
-        int mana_cost = GetManaAmount(myplr, known_spells[index]) >> 6;
-        int min_dmg, max_dmg;
-        GetDamageAmt(known_spells[index], &min_dmg, &max_dmg);
-		if(min_dmg == -1 && max_dmg == -1)
-			sprintf(&panelstr[0], "Mana cost: %d", mana_cost);	
-		else
-        	sprintf(&panelstr[0], "Mana: %d   DMG: %d - %d", mana_cost, min_dmg, max_dmg);
-        pnumlines = 1;
-
-		if(known_spells[index] == SPL_HBOLT) {
-			sprintf(&panelstr[64], "Damages undead only");
-			pnumlines++;
-		}
-=======
         SetSpellInfo(known_spells[index], RSPLTYPE_SPELL);
->>>>>>> d4153f4192bf3a9f7a0680619f318c3017e238ad
     }
 }
 
