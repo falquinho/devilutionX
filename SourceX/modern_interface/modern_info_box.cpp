@@ -4,7 +4,7 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#define MAX_COMPARE_LINES 7
+#define MAX_COMPARE_LINES 13
 
 char compare_info[MAX_COMPARE_LINES][128] = {"", "", "", "", "", "", ""};
 
@@ -183,9 +183,6 @@ void SetCompareEquipmentInfo(ItemStruct item)
         PrintItemPower(target_item._iSufPower, &target_item);
         sprintf(&compare_info[curr_line++][0], "%s", tempstr);
     }
-
-    if (target_item._iMagical == ITEM_QUALITY_UNIQUE)
-		sprintf(&compare_info[curr_line++][0], "Unique item.");
 	
     if (target_item._iMinMag + target_item._iMinDex + target_item._iMinStr) {
 		strcpy(tempstr, "Required:");
@@ -195,8 +192,37 @@ void SetCompareEquipmentInfo(ItemStruct item)
 			sprintf(tempstr, "%s %i Mag", tempstr, target_item._iMinMag);
 		if (target_item._iMinDex)
 			sprintf(tempstr, "%s %i Dex", tempstr, target_item._iMinDex);
-		sprintf(&compare_info[curr_line][0], tempstr);
+		sprintf(&compare_info[curr_line++][0], tempstr);
 	}
+
+    if(target_item._iMagical != ITEM_QUALITY_UNIQUE)
+        return;
+
+    sprintf(&compare_info[curr_line++][0], "Unique item.");
+    int uid = target_item._iUid;
+
+    PrintItemPower(UniqueItemList[uid].UIPower1, &target_item);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+
+    if (UniqueItemList[uid].UINumPL < 2) return; 
+    PrintItemPower(UniqueItemList[uid].UIPower2, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+    
+    if (UniqueItemList[uid].UINumPL < 3) return;
+    PrintItemPower(UniqueItemList[uid].UIPower3, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+    
+    if (UniqueItemList[uid].UINumPL < 4) return;
+    PrintItemPower(UniqueItemList[uid].UIPower4, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+    
+    if (UniqueItemList[uid].UINumPL < 5) return;
+    PrintItemPower(UniqueItemList[uid].UIPower5, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+    
+    if (UniqueItemList[uid].UINumPL < 6) return;
+    PrintItemPower(UniqueItemList[uid].UIPower6, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
 }
 
 void SetExtraInfo(char* extra)
