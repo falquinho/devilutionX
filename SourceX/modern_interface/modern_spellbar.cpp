@@ -52,7 +52,7 @@ void OnCursorOverModernSpellbar()
 
     if(quick_spells[slot] == SPL_INVALID) {
         sprintf(infostr, "Spell slot #%d", slot + 1);
-        sprintf(&panelstr[00], "Left click or Shift + %s", hotkeys[slot]);
+        sprintf(&panelstr[00], "Left click or Shift + %s", slot == 5? "S" : hotkeys[slot]);
         sprintf(&panelstr[64], "to set spell");
         pnumlines = 2;
     } else {
