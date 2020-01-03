@@ -1996,6 +1996,8 @@ char CheckInvHLight()
 	p = &plr[myplr];
 	ClearPanel();
 
+	SetExtraInfo("");
+
 	if (r >= 0 && r <= 3) {
 		rv = INVLOC_HEAD;
 		pi = &p->InvBody[rv];
@@ -2031,6 +2033,27 @@ char CheckInvHLight()
 		pi = &p->InvList[ii];
 
 		SetCompareEquipmentInfo(*pi);
+		if(
+			pi->_iMiscId == IMISC_FULLHEAL || 
+		   	pi->_iMiscId == IMISC_FULLMANA || 
+		   	pi->_iMiscId == IMISC_FULLREJUV || 
+		  	pi->_iMiscId == IMISC_HEAL || 
+		   	pi->_iMiscId == IMISC_MANA || 
+		   	pi->_iMiscId == IMISC_REJUV || 
+		   	pi->_iMiscId == IMISC_SCROLL || 
+		   	pi->_iMiscId == IMISC_SCROLLT 
+		) {
+			SetExtraInfo("Shift+click to put in belt");
+		} else if(
+			pi->_iLoc == ILOC_ONEHAND ||
+			pi->_iLoc == ILOC_TWOHAND ||
+			pi->_iLoc == ILOC_HELM ||
+			pi->_iLoc == ILOC_RING ||
+			pi->_iLoc == ILOC_AMULET ||
+			pi->_iLoc == ILOC_ARMOR
+		) {
+			SetExtraInfo("Shift+click to equip");
+		}
 
 	} else if (r >= 65) {
 		r -= 65;

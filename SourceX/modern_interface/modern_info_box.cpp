@@ -4,9 +4,11 @@
 
 DEVILUTION_BEGIN_NAMESPACE
 
-#define MAX_COMPARE_LINES 7
+#define MAX_COMPARE_LINES 13
 
 char compare_info[MAX_COMPARE_LINES][128] = {"", "", "", "", "", "", ""};
+
+char extra_info[64] = "";
 
 char compare_loc = NUM_INVLOC;
 
@@ -63,10 +65,14 @@ void DrawModernInfoBox()
     if(pcursmonst >= 0 &&  leveltype != DTYPE_TOWN)
         return DrawMonsterInfo();
 
+    int num_lines = 1 + pnumlines + (extra_info[0] == '\0'? 0 : 1);
     Rect box_rect;
     
-    box_rect.h = ((1 + pnumlines) * CHAR_H) + 4;
-    box_rect.w = strlen(infostr) * CHAR_W;
+    box_rect.h = (num_lines * CHAR_H) + 4;
+    if(strlen(extra_info) > strlen(infostr))
+        box_rect.w = strlen(extra_info) * CHAR_W;
+    else
+        box_rect.w = strlen(infostr) * CHAR_W;
 
     int i;
     for (i = 0; i < pnumlines; i++) {
@@ -82,11 +88,18 @@ void DrawModernInfoBox()
     DrawRectangle(box_rect, PAL16_GRAY + 15, false);
 
     int offset = (box_rect.w - strlen(infostr) * CHAR_W)/2;
-    DrawString(box_rect.x + offset, box_rect.y + 2, infostr);
+    int line_y = box_rect.y + 2;
+    DrawString(box_rect.x + offset, line_y, infostr);
+    line_y += CHAR_H;
 
-    for (i = 0; i < pnumlines; i++) {
+    for (i = 0; i < pnumlines; i++, line_y += CHAR_H) {
         offset = (box_rect.w - strlen(&panelstr[64 * i]) * CHAR_W)/2;
-        DrawString(box_rect.x + offset, box_rect.y + 2 + ((i + 1) * CHAR_H), &panelstr[64 * i]);
+        DrawString(box_rect.x + offset, line_y, &panelstr[64 * i]);
+    }
+
+    if(extra_info[0] != '\0') {
+        offset = (box_rect.w - strlen(extra_info) * CHAR_W) / 2;
+        DrawString(box_rect.x + offset, line_y, extra_info);
     }
 
     if(compare_info[0][0] != '\0' && pcurs == CURSOR_HAND)
@@ -170,9 +183,6 @@ void SetCompareEquipmentInfo(ItemStruct item)
         PrintItemPower(target_item._iSufPower, &target_item);
         sprintf(&compare_info[curr_line++][0], "%s", tempstr);
     }
-
-    if (target_item._iMagical == ITEM_QUALITY_UNIQUE)
-		sprintf(&compare_info[curr_line++][0], "Unique item.");
 	
     if (target_item._iMinMag + target_item._iMinDex + target_item._iMinStr) {
 		strcpy(tempstr, "Required:");
@@ -182,8 +192,42 @@ void SetCompareEquipmentInfo(ItemStruct item)
 			sprintf(tempstr, "%s %i Mag", tempstr, target_item._iMinMag);
 		if (target_item._iMinDex)
 			sprintf(tempstr, "%s %i Dex", tempstr, target_item._iMinDex);
-		sprintf(&compare_info[curr_line][0], tempstr);
+		sprintf(&compare_info[curr_line++][0], tempstr);
 	}
+
+    if(target_item._iMagical != ITEM_QUALITY_UNIQUE)
+        return;
+
+    sprintf(&compare_info[curr_line++][0], "Unique item.");
+    int uid = target_item._iUid;
+
+    PrintItemPower(UniqueItemList[uid].UIPower1, &target_item);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+
+    if (UniqueItemList[uid].UINumPL < 2) return; 
+    PrintItemPower(UniqueItemList[uid].UIPower2, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+    
+    if (UniqueItemList[uid].UINumPL < 3) return;
+    PrintItemPower(UniqueItemList[uid].UIPower3, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+    
+    if (UniqueItemList[uid].UINumPL < 4) return;
+    PrintItemPower(UniqueItemList[uid].UIPower4, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+    
+    if (UniqueItemList[uid].UINumPL < 5) return;
+    PrintItemPower(UniqueItemList[uid].UIPower5, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+    
+    if (UniqueItemList[uid].UINumPL < 6) return;
+    PrintItemPower(UniqueItemList[uid].UIPower6, &curruitem);
+    sprintf(&compare_info[curr_line++][0], tempstr);
+}
+
+void SetExtraInfo(char* extra)
+{
+    strcpy(extra_info, extra);
 }
 
 DEVILUTION_END_NAMESPACE

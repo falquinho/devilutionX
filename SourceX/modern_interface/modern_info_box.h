@@ -9,6 +9,8 @@ void ClearComparisonInfo();
 
 void SetCompareEquipmentInfo(ItemStruct item);
 
+void SetExtraInfo(char* extra_info);
+
 DEVILUTION_END_NAMESPACE
 
 #endif//__MODERNINFOBOX_H__
