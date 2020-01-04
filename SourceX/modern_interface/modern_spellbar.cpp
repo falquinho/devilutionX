@@ -81,7 +81,7 @@ void DrawModernSpellbar()
         
         if(quick_spells[i] != SPL_INVALID)
             CelDraw(SCREEN_X + x, SCREEN_Y + y, spellicons_sm_cel, SpellITbl[quick_spells[i]], frame_size);
-		DrawString(x + 13, y - CHAR_H/2, hotkeys[i]);
+		DrawString(i == 5? x + 9: x + 13, y - CHAR_H/2, hotkeys[i]);
 	}
 }
 

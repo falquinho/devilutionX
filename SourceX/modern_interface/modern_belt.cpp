@@ -24,9 +24,9 @@ void DrawModernBelt()
 		int frame = plr[myplr].SpdList[i]._iCurs + CURSOR_FIRSTITEM;
 
 		if (plr[myplr].SpdList[i]._iStatFlag)
-			CelClippedDraw(left + (hor_space * i), bottom, pCursCels, frame, frame_width);
+			CelClippedDraw(left + (hor_space * i), bottom - 1, pCursCels, frame, frame_width);
 		else
-			CelDrawLightRed(left + (hor_space * i), bottom, pCursCels, frame, frame_width, 0, 8, 1);
+			CelDrawLightRed(left + (hor_space * i), bottom - 1, pCursCels, frame, frame_width, 0, 8, 1);
 		
         char char_to_draw = i + 49;
         if((item._iMiscId == IMISC_FULLHEAL || item._iMiscId == IMISC_HEAL) && !first_heal_drawn) {
