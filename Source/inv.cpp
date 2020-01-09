@@ -1978,6 +1978,8 @@ char CheckInvHLight()
 	PlayerStruct *p;
 	char rv;
 
+	ClearComparisonInfo();
+
 	for (r = 0; (DWORD)r < 73; r++) {
 		if (MouseX >= InvRect[r].X
 		    && MouseX < InvRect[r].X + 29
