@@ -1097,8 +1097,8 @@ void DrawView(int StartX, int StartY)
 	gmenu_draw();
 	doom_draw();
 	DrawInfoBox();
-	DrawLifeFlask();
-	DrawManaFlask();
+	// DrawLifeFlask();
+	// DrawManaFlask();
 }
 
 /**
@@ -1379,26 +1379,19 @@ void DrawAndBlit()
 	force_redraw = 0;
 
 	lock_buf(0);
+	// Draw the Gameplay area
 	DrawView(ViewX, ViewY);
-	if (ctrlPan) {
-		DrawCtrlPan();
-	}
-	if (drawhpflag) {
-		UpdateLifeFlask();
-	}
-	if (drawmanaflag) {
-		UpdateManaFlask();
-	}
-	if (drawbtnflag) {
-		DrawCtrlBtns();
-	}
-	if (drawsbarflag) {
-		DrawInvBelt();
-	}
-	if (talkflag) {
-		DrawTalkPan();
-		hgt = SCREEN_HEIGHT;
-	}
+
+	// Draw the Control Panel area
+	DrawCtrlPan();
+	// UpdateLifeFlask();
+	// UpdateManaFlask();
+	DrawLifeMeter();
+	DrawCtrlBtns();
+	DrawInvBelt();
+	DrawTalkPan();
+	hgt = SCREEN_HEIGHT;
+
 	scrollrt_draw_cursor_item();
 
 	DrawFPS();

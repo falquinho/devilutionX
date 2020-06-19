@@ -84,6 +84,7 @@ extern "C" {
 #include "towners.h"
 #include "track.h"
 #include "trigs.h"
+#include "ui_life_meter.h"
 #include "wave.h"
 #include "render.h" // linked last, likely .s/.asm
 #ifdef __cplusplus

@@ -532,6 +532,9 @@ void ClearPanel()
 	pinfoflag = FALSE;
 }
 
+/**
+ * Draw a sub-area of the panel buffer.
+ **/
 void DrawPanelBox(int x, int y, int w, int h, int sx, int sy)
 {
 	int nSrcOff, nDstOff;
@@ -736,9 +739,9 @@ void InitControlPan()
 	pStatusPanel = LoadFileInMem("CtrlPan\\Panel8.CEL", NULL);
 	CelBlitWidth(pBtmBuff, 0, (PANEL_HEIGHT + 16) - 1, PANEL_WIDTH, pStatusPanel, 1, PANEL_WIDTH);
 	MemFreeDbg(pStatusPanel);
-	pStatusPanel = LoadFileInMem("CtrlPan\\P8Bulbs.CEL", NULL);
-	CelBlitWidth(pLifeBuff, 0, 87, 88, pStatusPanel, 1, 88);
-	CelBlitWidth(pManaBuff, 0, 87, 88, pStatusPanel, 2, 88);
+	pStatusPanel = LoadFileInMem("CtrlPan\\P8Bulbs.CEL", NULL); // Load the Empty Flasks CEL 
+	CelBlitWidth(pLifeBuff, 0, 87, 88, pStatusPanel, 1, 88); // Copy the Empty Life Flask gfx into pLifeBuff
+	CelBlitWidth(pManaBuff, 0, 87, 88, pStatusPanel, 2, 88); // Copy the Empty Mana Flask gfx into pManaBuff
 	MemFreeDbg(pStatusPanel);
 	talkflag = FALSE;
 	if (gbMaxPlayers != 1) {
@@ -796,6 +799,7 @@ void InitControlPan()
 	initialDropGoldValue = 0;
 	initialDropGoldIndex = 0;
 	PentSpn2Frame = 1;
+	LoadLifeMeter();
 }
 
 void DrawCtrlPan()
@@ -1135,6 +1139,7 @@ void FreeControlPan()
 	MemFreeDbg(pSBkBtnCel);
 	MemFreeDbg(pSBkIconCels);
 	MemFreeDbg(pGBoxBuff);
+	FreeLifeMeter();
 }
 
 BOOL control_WriteStringToBuffer(BYTE *str)
