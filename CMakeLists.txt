@@ -242,6 +242,7 @@ add_library(devilution STATIC
   Source/track.cpp
   Source/trigs.cpp
   Source/ui_life_meter.cpp
+  Source/ui_mana_meter.cpp
   Source/wave.cpp)
 
 set(devilutionx_SRCS

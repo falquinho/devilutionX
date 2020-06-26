@@ -85,6 +85,8 @@ extern "C" {
 #include "track.h"
 #include "trigs.h"
 #include "ui_life_meter.h"
+#include "ui_mana_meter.h"
+#include "ui_utils.h"
 #include "wave.h"
 #include "render.h" // linked last, likely .s/.asm
 #ifdef __cplusplus

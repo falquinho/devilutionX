@@ -1387,6 +1387,7 @@ void DrawAndBlit()
 	// UpdateLifeFlask();
 	// UpdateManaFlask();
 	DrawLifeMeter();
+	DrawManaMeter();
 	DrawCtrlBtns();
 	DrawInvBelt();
 	DrawTalkPan();

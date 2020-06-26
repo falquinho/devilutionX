@@ -800,6 +800,7 @@ void InitControlPan()
 	initialDropGoldIndex = 0;
 	PentSpn2Frame = 1;
 	LoadLifeMeter();
+	LoadManaMeter();
 }
 
 void DrawCtrlPan()
